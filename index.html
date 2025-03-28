@@ -59,7 +59,7 @@
             max-width: 100%;
             padding: 0 1rem;
             margin: 0 auto;
-            padding-bottom: 80px; /* Для плашки поддержки */
+            padding-bottom: 80px;
         }
         
         .section {
@@ -198,7 +198,7 @@
             padding: 0 1rem;
         }
         
-        /* Стиль для плашки поддержки ВК */
+        /* Стили для чата поддержки */
         .support-banner {
             position: fixed;
             bottom: 0;
@@ -212,6 +212,7 @@
             border-top: 1px solid #eee;
             box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
             z-index: 100;
+            display: none;
         }
         
         .vk-icon {
@@ -230,6 +231,50 @@
             font-weight: 600;
             font-size: 0.95rem;
             white-space: nowrap;
+        }
+        
+        .support-close {
+            cursor: pointer;
+            font-size: 1.2rem;
+            color: #999;
+            padding: 0 5px;
+            margin-left: 5px;
+        }
+        
+        .support-close:hover {
+            color: #555;
+        }
+        
+        /* Кнопка чата в углу */
+        .chat-button {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #5181B8;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 25px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        
+        .chat-button:hover {
+            background: #3a6ea5;
+            transform: translateY(-2px);
+        }
+        
+        .chat-button img {
+            width: 20px;
+            height: 20px;
+        }
+        
+        .chat-button span {
+            font-size: 0.9rem;
         }
         
         /* Анимация копирования */
@@ -251,6 +296,14 @@
         
         .copied-message.visible {
             opacity: 1;
+        }
+        
+        /* Виджет сообщений ВК */
+        .vk-msg-widget {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            z-index: 99;
         }
     </style>
 </head>
@@ -394,11 +447,21 @@
     </footer>
     
     <!-- Плашка "Написать в ВК" -->
-    <div class="support-banner">
+    <div class="support-banner" id="supportBanner">
         <img src="https://vk.com/images/icons/favicons/fav_logo.ico" class="vk-icon" alt="VK">
-        <div class="support-text">Есть вопросы?</div>
-        <a href="https://vk.com/write229888170" class="support-link">Написать в ВК</a>
+        <div class="support-text">Нужна помощь? Напишите нам в сообщения сообщества</div>
+        <a href="https://vk.com/write229888170" class="support-link" id="supportLink">Написать в поддержку</a>
+        <div class="support-close" id="supportClose">×</div>
     </div>
+    
+    <!-- Кнопка чата в углу экрана -->
+    <div class="chat-button" id="chatButton">
+        <img src="https://vk.com/images/icons/favicons/fav_logo.ico" alt="VK Support">
+        <span>Поддержка</span>
+    </div>
+    
+    <!-- Виджет сообщений ВК -->
+    <div id="vk_community_messages" class="vk-msg-widget"></div>
     
     <div id="copiedMessage" class="copied-message">Скопировано!</div>
     
@@ -473,6 +536,16 @@
             if (currentPlatform === 'vk') {
                 document.documentElement.style.setProperty('--primary', '#5181B8');
                 document.documentElement.style.setProperty('--secondary', '#5E81A8');
+                
+                // Инициализация виджета сообщений ВК
+                if (typeof VK !== 'undefined' && VK.Widgets) {
+                    VK.Widgets.CommunityMessages("vk_community_messages", 229888170, {
+                        expandTimeout: "5000",
+                        widgetPosition: "right",
+                        disableExpandChatSound: "1",
+                        tooltipButtonText: "Есть вопрос?"
+                    });
+                }
             }
             else if (currentPlatform === 'telegram') {
                 document.documentElement.style.setProperty('--primary', '#2AABEE');
@@ -484,11 +557,50 @@
                 document.body.style.fontSize = '15px';
             }
             
-            // Для VK скрываем плашку, если открыто из приложения
+            // Управление плашкой поддержки
+            const supportBanner = document.getElementById('supportBanner');
+            const supportClose = document.getElementById('supportClose');
+            const supportLink = document.getElementById('supportLink');
+            const chatButton = document.getElementById('chatButton');
+            
+            // Показываем плашку только в браузере (не в VK/Telegram)
+            if (currentPlatform === 'web' && !localStorage.getItem('supportBannerClosed')) {
+                supportBanner.style.display = 'flex';
+            }
+            
+            // Закрытие плашки
+            if (supportClose) {
+                supportClose.addEventListener('click', () => {
+                    supportBanner.style.display = 'none';
+                    localStorage.setItem('supportBannerClosed', 'true');
+                });
+            }
+            
+            // Открытие чата в приложении VK
+            if (currentPlatform === 'vk' && supportLink) {
+                supportLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    VK.callMethod('openChat', 229888170);
+                });
+            }
+            
+            // Обработчик кнопки чата
+            chatButton.addEventListener('click', function() {
+                if (currentPlatform === 'vk' && typeof VK !== 'undefined') {
+                    VK.callMethod('openChat', 229888170);
+                } else {
+                    window.open('https://vk.com/write229888170', '_blank');
+                }
+            });
+            
+            // Скрываем кнопку чата, если открыто из VK (там есть свой интерфейс)
             if (currentPlatform === 'vk') {
-                document.querySelector('.support-banner').style.display = 'none';
+                chatButton.style.display = 'none';
             }
         });
     </script>
+    
+    <!-- Подключение VK API -->
+    <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
 </body>
 </html>
