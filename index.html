@@ -32,149 +32,169 @@
             min-height: 100vh;
             overflow-x: hidden;
         }
-        
-        header {
-            background: linear-gradient(135deg, var(--primary), var(--secondary));
-            color: white;
-            padding: 1.2rem 1rem;
-            text-align: center;
-            position: sticky;
-            top: 0;
-            z-index: 10;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-        }
-        
-        /* Все остальные стили из предыдущего кода остаются без изменений */
-        /* ... */
-        
-        /* Стили для чата поддержки */
-        .vk-support-button {
+
+        /* Стили для встроенного чата */
+        .vk-chat-container {
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: #5181B8;
+            width: 350px;
+            height: 500px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .vk-chat-header {
+            background: var(--primary);
             color: white;
-            padding: 12px 16px;
-            border-radius: 24px;
+            padding: 12px 15px;
             display: flex;
             align-items: center;
-            gap: 8px;
+            justify-content: space-between;
+        }
+
+        .vk-chat-title {
+            font-weight: 500;
+            font-size: 16px;
+        }
+
+        .vk-chat-close {
+            cursor: pointer;
+            font-size: 20px;
+            line-height: 1;
+        }
+
+        .vk-chat-frame {
+            flex-grow: 1;
+            border: none;
+            background: white;
+        }
+
+        .vk-chat-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--primary);
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            z-index: 1000;
-            text-decoration: none;
-            font-weight: 500;
+            z-index: 1001;
         }
-        
-        .vk-support-button img {
+
+        .vk-chat-toggle img {
             width: 24px;
             height: 24px;
         }
-        
-        /* Виджет сообщений ВК */
-        .vk-msg-widget {
-            position: fixed;
-            bottom: 80px;
-            right: 20px;
-            z-index: 999;
-        }
+
+        /* Остальные ваши стили */
+        /* ... */
     </style>
 </head>
 <body>
-    <!-- Весь ваш существующий HTML-код -->
+    <!-- Ваш существующий контент -->
     <!-- ... -->
 
-    <!-- Кнопка поддержки ВК -->
-    <a href="https://vk.com/im?sel=-229889746" 
-       class="vk-support-button" 
-       target="_blank"
-       id="vkSupportButton">
-        <img src="https://vk.com/images/icons/favicons/fav_logo.ico" alt="VK">
-        Поддержка
-    </a>
+    <!-- Кнопка для открытия/закрытия чата -->
+    <div class="vk-chat-toggle" id="chatToggle">
+        <img src="https://vk.com/images/icons/favicons/fav_logo.ico" alt="VK Chat">
+    </div>
 
-    <!-- Виджет сообщений ВК -->
-    <div id="vk_community_messages" class="vk-msg-widget"></div>
+    <!-- Контейнер чата (изначально скрыт) -->
+    <div class="vk-chat-container" id="chatContainer" style="display: none;">
+        <div class="vk-chat-header">
+            <span class="vk-chat-title">Чат поддержки</span>
+            <span class="vk-chat-close" id="chatClose">×</span>
+        </div>
+        <iframe class="vk-chat-frame" id="chatFrame" allow="autoplay; encrypted-media"></iframe>
+    </div>
 
     <script>
         // Замените этот ID на цифровой ID вашего сообщества ВК
-        const COMMUNITY_ID = ВАШ_ID_СООБЩЕСТВА; // Только цифры, без минуса!
+        const COMMUNITY_ID = ВАШ_ID_СООБЩЕСТВА; // Только цифры!
         
-        // Инициализация виджета ВК
-        function initVKWidget() {
-            if (typeof VK === 'undefined') {
-                console.log("VK API не загружен, загружаем...");
-                loadVKAPI();
-                return;
-            }
+        // Функция для загрузки чата
+        function loadVKChat() {
+            const chatFrame = document.getElementById('chatFrame');
+            const chatUrl = `https://vk.com/im?sel=-${COMMUNITY_ID}&chat_iframe=1`;
             
-            try {
-                VK.Widgets.CommunityMessages("vk_community_messages", COMMUNITY_ID, {
-                    widgetPosition: "right",
-                    disableNewMessagesSound: "0",
-                    expanded: "0",
-                    tooltipButtonText: "Написать нам",
-                    welcomeScreen: "1"
-                });
-                console.log("Виджет сообщений ВК инициализирован");
-            } catch (e) {
-                console.error("Ошибка инициализации виджета ВК:", e);
-            }
-        }
-        
-        // Загрузка API ВК
-        function loadVKAPI() {
-            const script = document.createElement('script');
-            script.src = 'https://vk.com/js/api/openapi.js?169';
-            script.onload = function() {
-                console.log("VK API загружен");
-                initVKWidget();
-            };
-            script.onerror = function() {
-                console.error("Не удалось загрузить VK API");
-                document.getElementById('vkSupportButton').style.display = 'flex';
-            };
-            document.body.appendChild(script);
-        }
-        
-        // Инициализация при загрузке страницы
-        document.addEventListener('DOMContentLoaded', function() {
-            // Определение платформы
-            const isVK = typeof VK !== 'undefined' && VK.WebApp;
-            const isTelegram = typeof Telegram !== 'undefined' && Telegram.WebApp;
+            chatFrame.src = chatUrl;
+            document.getElementById('chatContainer').style.display = 'flex';
             
-            // Для ВК
-            if (isVK) {
-                VK.WebApp.init();
-                document.getElementById('platformIndicator').textContent = 'VK';
-                document.getElementById('platformIndicator').style.backgroundColor = '#5181B8';
-                
-                // В приложении VK используем родной интерфейс
-                document.getElementById('vkSupportButton').addEventListener('click', function(e) {
-                    e.preventDefault();
-                    VK.callMethod('openChat', -COMMUNITY_ID);
-                });
-            } 
-            // Для Telegram
-            else if (isTelegram) {
-                Telegram.WebApp.ready();
-                Telegram.WebApp.expand();
-                document.getElementById('vkSupportButton').style.display = 'none';
-            }
-            
-            // Инициализация виджета ВК
-            initVKWidget();
-            
-            // Показываем кнопку, если виджет не загрузился
-            setTimeout(function() {
-                if (!document.querySelector('.vkui__widget')) {
-                    document.getElementById('vkSupportButton').style.display = 'flex';
+            // Регулярная проверка загрузки чата
+            const checkLoaded = setInterval(() => {
+                try {
+                    if (chatFrame.contentWindow.document.readyState === 'complete') {
+                        clearInterval(checkLoaded);
+                        // Чат загружен
+                    }
+                } catch (e) {
+                    console.log("Ожидание загрузки чата...");
                 }
-            }, 3000);
+            }, 500);
+        }
+
+        // Управление видимостью чата
+        document.getElementById('chatToggle').addEventListener('click', function() {
+            const container = document.getElementById('chatContainer');
+            if (container.style.display === 'none') {
+                loadVKChat();
+            } else {
+                container.style.display = 'none';
+            }
         });
-        
-        // Все остальные функции (openTab, copyToClipboard и т.д.)
-        // ... остаются без изменений
+
+        document.getElementById('chatClose').addEventListener('click', function() {
+            document.getElementById('chatContainer').style.display = 'none';
+        });
+
+        // Закрытие чата при клике вне его области
+        document.addEventListener('click', function(e) {
+            const container = document.getElementById('chatContainer');
+            const toggle = document.getElementById('chatToggle');
+            
+            if (container.style.display !== 'none' && 
+                !container.contains(e.target) && 
+                e.target !== toggle) {
+                container.style.display = 'none';
+            }
+        });
+
+        // Адаптация под мобильные устройства
+        function adaptChatForMobile() {
+            const container = document.getElementById('chatContainer');
+            if (window.innerWidth < 768) {
+                container.style.width = 'calc(100% - 40px)';
+                container.style.height = '60vh';
+                container.style.bottom = '10px';
+                container.style.right = '10px';
+            } else {
+                container.style.width = '350px';
+                container.style.height = '500px';
+                container.style.bottom = '20px';
+                container.style.right = '20px';
+            }
+        }
+
+        window.addEventListener('resize', adaptChatForMobile);
+        adaptChatForMobile();
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            // Ваша существующая инициализация
+            // ...
+        });
     </script>
 </body>
 </html>
