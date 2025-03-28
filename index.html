@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Emotion Bot - Полное руководство</title>
+    <style>
+        :root {
+            --primary: #7360F2;
+            --secondary: #F260B6;
+            --dark: #2E2D4D;
+            --light: #F5F5F5;
+            --success: #4CAF50;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light);
+            color: var(--dark);
+            line-height: 1.6;
+            padding-bottom: 40px;
+        }
+        
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 20px 0;
+            text-align: center;
+            border-radius: 0 0 20px 20px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        h1 {
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+        
+        h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        h3 {
+            margin: 15px 0 10px;
+            color: var(--secondary);
+        }
+        
+        .command {
+            background: var(--light);
+            border-left: 4px solid var(--primary);
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            position: relative;
+        }
+        
+        .command-name {
+            font-weight: bold;
+            color: var(--dark);
+        }
+        
+        .command-desc {
+            margin-top: 5px;
+            color: #555;
+        }
+        
+        .example {
+            display: inline-block;
+            background: rgba(0,0,0,0.05);
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-family: monospace;
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        
+        .result {
+            display: block;
+            margin-top: 5px;
+            color: var(--success);
+            font-style: italic;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            border-bottom: 3px solid var(--primary);
+            font-weight: bold;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: all 0.3s;
+        }
+        
+        .copy-btn:hover {
+            background: var(--secondary);
+        }
+        
+        footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #777;
+            font-size: 0.9rem;
+        }
+        
+        @media (max-width: 600px) {
+            .section {
+                padding: 20px 15px;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+            }
+            
+            h2 {
+                font-size: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>🤖 Emotion Bot</h1>
+            <p>Полное руководство по использованию</p>
+        </div>
+    </header>
+    
+    <div class="container">
+        <div class="tab-container">
+            <div class="tab active" onclick="openTab('commands')">Команды</div>
+            <div class="tab" onclick="openTab('emotions')">Эмоции</div>
+            <div class="tab" onclick="openTab('actions')">Действия</div>
+            <div class="tab" onclick="openTab('examples')">Примеры</div>
+        </div>
+        
+        <!-- Команды -->
+        <div id="commands" class="tab-content active">
+            <div class="section">
+                <h2>📋 Основные команды</h2>
+                
+                <div class="command">
+                    <div class="command-name">/start</div>
+                    <div class="command-desc">Начальное приветствие и краткая инструкция</div>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">/setnick [ник]</div>
+                    <div class="command-desc">Установить или изменить ваш никнейм</div>
+                    <span class="example">/setnick КотоПёс</span>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">/nick</div>
+                    <div class="command-desc">Показать ваш текущий никнейм</div>
+                    <span class="example">/nick</span>
+                    <span class="result">→ Ваш ник: КотоПёс</span>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Эмоции -->
+        <div id="emotions" class="tab-content">
+            <div class="section">
+                <h2>🎭 Эмоциональные префиксы</h2>
+                <p>Добавьте эти символы в начале сообщения:</p>
+                
+                <div class="command">
+                    <div class="command-name">!!!!</div>
+                    <div class="command-desc">Важное сообщение</div>
+                    <span class="example">!!!! Это срочно!</span>
+                    <span class="result">→ Иван (❗ говорит важно): Это срочно!</span>
+                    <button class="copy-btn" onclick="copyToClipboard('!!!! ')">Копировать</button>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">????</div>
+                    <div class="command-desc">Задать вопрос</div>
+                    <span class="example">???? Ты где?</span>
+                    <span class="result">→ Маша (❓ спрашивает): Ты где?</span>
+                    <button class="copy-btn" onclick="copyToClipboard('???? ')">Копировать</button>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">^^^^</div>
+                    <div class="command-desc">Выразить радость</div>
+                    <span class="example">^^^^ Ура!</span>
+                    <span class="result">→ Пётр (☺ радуется): Ура!</span>
+                    <button class="copy-btn" onclick="copyToClipboard('^^^^ ')">Копировать</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Действия -->
+        <div id="actions" class="tab-content">
+            <div class="section">
+                <h2>🤝 Команды действий</h2>
+                <p>Взаимодействуйте с другими пользователями:</p>
+                
+                <div class="command">
+                    <div class="command-name">/hug [ник]</div>
+                    <div class="command-desc">Обнять пользователя</div>
+                    <span class="example">/hug @Дружок</span>
+                    <span class="result">→ Иван крепко обнимает Дружка!</span>
+                    <button class="copy-btn" onclick="copyToClipboard('/hug ')">Копировать</button>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">/kiss [ник]</div>
+                    <div class="command-desc">Поцеловать пользователя</div>
+                    <span class="example">/kiss Маша</span>
+                    <span class="result">→ Пётр нежно целует Машу!</span>
+                    <button class="copy-btn" onclick="copyToClipboard('/kiss ')">Копировать</button>
+                </div>
+                
+                <div class="command">
+                    <div class="command-name">/slap [ник]</div>
+                    <div class="command-desc">Дать подзатыльник</div>
+                    <span class="example">/slap Шалун</span>
+                    <span class="result">→ Оля отправляет Шалуна в нокаут!</span>
+                    <button class="copy-btn" onclick="copyToClipboard('/slap ')">Копировать</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Примеры -->
+        <div id="examples" class="tab-content">
+            <div class="section">
+                <h2>🌟 Примеры использования</h2>
+                
+                <h3>Сценарий 1: Установка ника</h3>
+                <div class="command">
+                    <span class="example">/setnick Лис</span>
+                    <span class="result">→ Ваш новый ник: Лис</span>
+                </div>
+                
+                <h3>Сценарий 2: Общение с эмоциями</h3>
+                <div class="command">
+                    <span class="example">^^^^ Привет!</span>
+                    <span class="result">→ Лис (☺ радуется): Привет!</span>
+                </div>
+                <div class="command">
+                    <span class="example">???? Как дела?</span>
+                    <span class="result">→ Дружок (❓ спрашивает): Как дела?</span>
+                </div>
+                <div class="command">
+                    <span class="example">++++ Отлично!</span>
+                    <span class="result">→ Лис (👍 одобряет): Отлично!</span>
+                </div>
+                
+                <h3>Сценарий 3: Взаимодействия</h3>
+                <div class="command">
+                    <span class="example">/hug Дружок</span>
+                    <span class="result">→ Лис крепко обнимает Дружка!</span>
+                </div>
+                <div class="command">
+                    <span class="example">/kiss Маша</span>
+                    <span class="result">→ Лис страстно целует Машу!</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        <div class="container">
+            <p>© 2023 Emotion Bot | Все команды работают в любом чате с ботом</p>
+        </div>
+    </footer>
+    
+    <script>
+        // Переключение вкладок
+        function openTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            tabs.forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            const tabButtons = document.querySelectorAll('.tab');
+            tabButtons.forEach(button => {
+                button.classList.remove('active');
+            });
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+        }
+        
+        // Копирование в буфер обмена
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Скопировано: ' + text);
+            });
+        }
+        
+        // Интеграция с Telegram WebApp
+        if (typeof Telegram !== 'undefined') {
+            Telegram.WebApp.ready();
+            Telegram.WebApp.expand();
+            Telegram.WebApp.setHeaderColor('#7360F2');
+            Telegram.WebApp.setBackgroundColor('#F5F5F5');
+        }
+    </script>
+</body>
+</html>
