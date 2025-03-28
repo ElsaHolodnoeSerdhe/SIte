@@ -301,9 +301,19 @@
         /* Виджет сообщений ВК */
         .vk-msg-widget {
             position: fixed;
-            bottom: 80px;
+            bottom: 20px;
             right: 20px;
-            z-index: 99;
+            z-index: 999;
+            width: 48px;
+            height: 48px;
+        }
+        
+        /* Адаптация под мобильные */
+        @media (max-width: 768px) {
+            .vk-msg-widget {
+                bottom: 70px;
+                right: 10px;
+            }
         }
     </style>
 </head>
@@ -527,25 +537,50 @@
             }, 2000);
         }
         
+        // Инициализация виджета сообщений ВК
+        function initVKWidget() {
+            if (typeof VK === 'undefined' || !VK.Widgets) {
+                // Если VK API не загружен, попробуем загрузить его
+                var script = document.createElement('script');
+                script.src = 'https://vk.com/js/api/openapi.js?169';
+                script.onload = function() {
+                    VK.init({apiId: 1234567}); // Замените на ваш API ID
+                    VK.Widgets.CommunityMessages("vk_community_messages", 229888170, {
+                        expandTimeout: 5000,
+                        widgetPosition: "right",
+                        disableExpandChatSound: "1",
+                        tooltipButtonText: "Есть вопрос?",
+                        buttonType: "blue_circle"
+                    });
+                };
+                document.body.appendChild(script);
+            } else {
+                // Если VK API уже загружен
+                VK.Widgets.CommunityMessages("vk_community_messages", 229888170, {
+                    expandTimeout: 5000,
+                    widgetPosition: "right",
+                    disableExpandChatSound: "1",
+                    tooltipButtonText: "Есть вопрос?",
+                    buttonType: "blue_circle"
+                });
+            }
+        }
+        
         // Текущая платформа
         const currentPlatform = detectPlatform();
         
         // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', function() {
             // Адаптация под разные платформы
             if (currentPlatform === 'vk') {
                 document.documentElement.style.setProperty('--primary', '#5181B8');
                 document.documentElement.style.setProperty('--secondary', '#5E81A8');
                 
                 // Инициализация виджета сообщений ВК
-                if (typeof VK !== 'undefined' && VK.Widgets) {
-                    VK.Widgets.CommunityMessages("vk_community_messages", 229888170, {
-                        expandTimeout: "5000",
-                        widgetPosition: "right",
-                        disableExpandChatSound: "1",
-                        tooltipButtonText: "Есть вопрос?"
-                    });
-                }
+                initVKWidget();
+                
+                // Скрываем кнопку чата, так как есть виджет
+                document.getElementById('chatButton').style.display = 'none';
             }
             else if (currentPlatform === 'telegram') {
                 document.documentElement.style.setProperty('--primary', '#2AABEE');
@@ -580,27 +615,19 @@
             if (currentPlatform === 'vk' && supportLink) {
                 supportLink.addEventListener('click', (e) => {
                     e.preventDefault();
-                    VK.callMethod('openChat', 229888170);
+                    VK.callMethod('openChat', 229889746);
                 });
             }
             
             // Обработчик кнопки чата
             chatButton.addEventListener('click', function() {
                 if (currentPlatform === 'vk' && typeof VK !== 'undefined') {
-                    VK.callMethod('openChat', 229888170);
+                    VK.callMethod('openChat', 229889746);
                 } else {
-                    window.open('https://vk.com/write229888170', '_blank');
+                    window.open('https://vk.com/write229889746', '_blank');
                 }
             });
-            
-            // Скрываем кнопку чата, если открыто из VK (там есть свой интерфейс)
-            if (currentPlatform === 'vk') {
-                chatButton.style.display = 'none';
-            }
         });
     </script>
-    
-    <!-- Подключение VK API -->
-    <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
 </body>
 </html>
