@@ -6,9 +6,9 @@
     <title>РП Бот - Гид по командам</title>
     <style>
         :root {
-            --primary: #5181B8;  /* Основной цвет VK */
-            --secondary: #5E81A8; /* Вторичный цвет VK */
-            --telegram: #2AABEE;  /* Цвет Telegram */
+            --primary: #5181B8;
+            --secondary: #5E81A8;
+            --telegram: #2AABEE;
             --dark: #22313F;
             --light: #F9F9F9;
             --text: #222222;
@@ -44,258 +44,31 @@
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
-        .platform-indicator {
-            background: var(--telegram);
-            color: white;
-            padding: 0.3rem;
-            font-size: 0.7rem;
-            border-radius: 3px;
-            margin-left: 0.5rem;
-            display: inline-block;
-            vertical-align: middle;
-        }
-        
-        .container {
-            max-width: 100%;
-            padding: 0 1rem;
-            margin: 0 auto;
-            padding-bottom: 80px;
-        }
-        
-        .section {
-            background: white;
-            border-radius: 12px;
-            padding: 1.2rem;
-            margin: 1rem 0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        
-        h2 {
-            color: var(--primary);
-            margin-bottom: 1rem;
-            font-size: 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        
-        h3 {
-            margin: 1rem 0 0.5rem;
-            color: var(--secondary);
-            font-size: 1.1rem;
-        }
-        
-        .command {
-            background: var(--light);
-            border-left: 4px solid var(--primary);
-            padding: 0.8rem;
-            margin: 0.8rem 0;
-            border-radius: 0 8px 8px 0;
-            word-break: break-word;
-        }
-        
-        .command-name {
-            font-weight: 600;
-            color: var(--dark);
-            font-size: 0.95rem;
-        }
-        
-        .command-desc {
-            margin-top: 0.3rem;
-            color: #555;
-            font-size: 0.9rem;
-        }
-        
-        .example {
-            display: inline-block;
-            background: rgba(0,0,0,0.05);
-            padding: 0.4rem 0.8rem;
-            border-radius: 6px;
-            font-family: 'Courier New', monospace;
-            margin: 0.3rem 0;
-            font-size: 0.85rem;
-            width: 100%;
-            overflow-x: auto;
-        }
-        
-        .result {
-            display: block;
-            margin-top: 0.3rem;
-            color: var(--success);
-            font-style: italic;
-            font-size: 0.85rem;
-        }
-        
-        .tab-container {
-            display: flex;
-            overflow-x: auto;
-            scrollbar-width: none;
-            -ms-overflow-style: none;
-            background: white;
-            position: sticky;
-            top: 62px;
-            z-index: 9;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
-        }
-        
-        .tab-container::-webkit-scrollbar {
-            display: none;
-        }
-        
-        .tab {
-            padding: 0.8rem 1rem;
-            cursor: pointer;
-            border-bottom: 3px solid transparent;
-            white-space: nowrap;
-            font-size: 0.9rem;
-            font-weight: 500;
-            flex-shrink: 0;
-        }
-        
-        .tab.active {
-            border-bottom: 3px solid var(--primary);
-            color: var(--primary);
-            font-weight: 600;
-        }
-        
-        .tab-content {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        .tab-content.active {
-            display: block;
-        }
-        
-        .copy-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 6px;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            font-size: 0.85rem;
-            width: 100%;
-            transition: all 0.2s;
-        }
-        
-        .copy-btn:active {
-            transform: scale(0.98);
-            opacity: 0.9;
-        }
-        
-        footer {
-            text-align: center;
-            margin: 1.5rem 0;
-            color: #777;
-            font-size: 0.8rem;
-            padding: 0 1rem;
-        }
+        /* Все остальные стили из предыдущего кода остаются без изменений */
+        /* ... */
         
         /* Стили для чата поддержки */
-        .support-banner {
-            position: fixed;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            background: white;
-            padding: 12px 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            border-top: 1px solid #eee;
-            box-shadow: 0 -2px 5px rgba(0,0,0,0.05);
-            z-index: 100;
-            display: none;
-        }
-        
-        .vk-icon {
-            width: 24px;
-            height: 24px;
-        }
-        
-        .support-text {
-            flex-grow: 1;
-            font-size: 0.9rem;
-        }
-        
-        .support-link {
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 0.95rem;
-            white-space: nowrap;
-        }
-        
-        .support-close {
-            cursor: pointer;
-            font-size: 1.2rem;
-            color: #999;
-            padding: 0 5px;
-            margin-left: 5px;
-        }
-        
-        .support-close:hover {
-            color: #555;
-        }
-        
-        /* Кнопка чата в углу */
-        .chat-button {
+        .vk-support-button {
             position: fixed;
             bottom: 20px;
             right: 20px;
             background: #5181B8;
             color: white;
-            padding: 10px 15px;
-            border-radius: 25px;
+            padding: 12px 16px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
             gap: 8px;
             cursor: pointer;
             box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-            z-index: 100;
-            transition: all 0.3s;
+            z-index: 1000;
+            text-decoration: none;
+            font-weight: 500;
         }
         
-        .chat-button:hover {
-            background: #3a6ea5;
-            transform: translateY(-2px);
-        }
-        
-        .chat-button img {
-            width: 20px;
-            height: 20px;
-        }
-        
-        .chat-button span {
-            font-size: 0.9rem;
-        }
-        
-        /* Анимация копирования */
-        .copied-message {
-            position: fixed;
-            bottom: 70px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--success);
-            color: white;
-            padding: 0.5rem 1.5rem;
-            border-radius: 20px;
-            z-index: 100;
-            opacity: 0;
-            transition: opacity 0.3s;
-            font-size: 0.9rem;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-        }
-        
-        .copied-message.visible {
-            opacity: 1;
+        .vk-support-button img {
+            width: 24px;
+            height: 24px;
         }
         
         /* Виджет сообщений ВК */
@@ -303,304 +76,105 @@
             position: fixed;
             bottom: 80px;
             right: 20px;
-            z-index: 99;
+            z-index: 999;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>🎭 РП Бот<span id="platformIndicator" class="platform-indicator">Telegram</span></h1>
-        <p>Полное руководство по ролевым командам</p>
-    </header>
-    
-    <div class="tab-container">
-        <div class="tab active" onclick="openTab('commands')">📋 Команды</div>
-        <div class="tab" onclick="openTab('emotions')">🎭 Эмоции</div>
-        <div class="tab" onclick="openTab('actions')">🤝 Действия</div>
-        <div class="tab" onclick="openTab('examples')">✨ Примеры</div>
-    </div>
-    
-    <div class="container">
-        <!-- Команды -->
-        <div id="commands" class="tab-content active">
-            <div class="section">
-                <h2>📋 Основные команды</h2>
-                
-                <div class="command">
-                    <div class="command-name">/start</div>
-                    <div class="command-desc">Начальное приветствие и краткая инструкция</div>
-                    <div id="vk-start-note" class="command-desc" style="display: none; color: #E64646;">
-                        В ВК используйте "Начать" вместо /start
-                    </div>
-                </div>
-                
-                <div class="command">
-                    <div class="command-name">/setnick [ник]</div>
-                    <div class="command-desc">Установить ваш ролевой никнейм</div>
-                    <span class="example">/setnick Тёмный_Лорд</span>
-                    <span class="result">→ Ваш ник установлен: Тёмный_Лорд</span>
-                </div>
-                
-                <div class="command">
-                    <div class="command-name">/nick</div>
-                    <div class="command-desc">Показать ваш текущий ник</div>
-                    <span class="example">/nick</span>
-                    <span class="result">→ Ваш ник: Тёмный_Лорд</span>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Эмоции -->
-        <div id="emotions" class="tab-content">
-            <div class="section">
-                <h2>🎭 Эмоциональные префиксы</h2>
-                <p>Добавьте в начало сообщения:</p>
-                
-                <div class="command">
-                    <div class="command-name">!!!!</div>
-                    <div class="command-desc">Важное/громкое сообщение</div>
-                    <span class="example">!!!! Внимание всем!</span>
-                    <span class="result">→ Тёмный_Лорд (❗ кричит): Внимание всем!</span>
-                    <button class="copy-btn" onclick="copyToClipboard('!!!! ')">Копировать</button>
-                </div>
-                
-                <div class="command">
-                    <div class="command-name">????</div>
-                    <div class="command-desc">Вопрос/недоумение</div>
-                    <span class="example">???? Что происходит?</span>
-                    <span class="result">→ Светлый_Маг (❓ спрашивает): Что происходит?</span>
-                    <button class="copy-btn" onclick="copyToClipboard('???? ')">Копировать</button>
-                </div>
-                
-                <div class="command">
-                    <div class="command-name">^^^^</div>
-                    <div class="command-desc">Радость/восторг</div>
-                    <span class="example">^^^^ Наконец-то!</span>
-                    <span class="result">→ Весёлый_Гном (☺ радуется): Наконец-то!</span>
-                    <button class="copy-btn" onclick="copyToClipboard('^^^^ ')">Копировать</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Действия -->
-        <div id="actions" class="tab-content">
-            <div class="section">
-                <h2>🤝 Ролевые действия</h2>
-                <p>Взаимодействуйте с другими персонажами:</p>
-                
-                <div class="command">
-                    <div class="command-name">/hug [ник]</div>
-                    <div class="command-desc">Обнять персонажа</div>
-                    <span class="example">/hug @Светлый_Маг</span>
-                    <span class="result">→ Тёмный_Лорд крепко обнимает Светлого_Мага!</span>
-                    <button class="copy-btn" onclick="copyToClipboard('/hug ')">Копировать</button>
-                </div>
-                
-                <div class="command">
-                    <div class="command-name">/slap [ник]</div>
-                    <div class="command-desc">Дать пощечину</div>
-                    <span class="example">/slap Наглый_Вор</span>
-                    <span class="result">→ Светлый_Маг даёт пощечину Наглому_Вору!</span>
-                    <button class="copy-btn" onclick="copyToClipboard('/slap ')">Копировать</button>
-                </div>
-                
-                <div class="command">
-                    <div class="command-name">/pat [ник]</div>
-                    <div class="command-desc">Погладить по голове</div>
-                    <span class="example">/pat Весёлый_Гном</span>
-                    <span class="result">→ Светлый_Маг нежно гладит Весёлого_Гнома!</span>
-                    <button class="copy-btn" onclick="copyToClipboard('/pat ')">Копировать</button>
-                </div>
-            </div>
-        </div>
-        
-        <!-- Примеры -->
-        <div id="examples" class="tab-content">
-            <div class="section">
-                <h2>✨ Ролевые сценарии</h2>
-                
-                <h3>Сценарий 1: Встреча</h3>
-                <div class="command">
-                    <span class="example">^^^^ Наконец-то ты здесь!</span>
-                    <span class="result">→ Весёлый_Гном (☺ радуется): Наконец-то ты здесь!</span>
-                </div>
-                <div class="command">
-                    <span class="example">/hug Весёлый_Гном</span>
-                    <span class="result">→ Светлый_Маг нежно обнимает Весёлого_Гнома!</span>
-                </div>
-                
-                <h3>Сценарий 2: Конфликт</h3>
-                <div class="command">
-                    <span class="example">!!!! Ты предатель!</span>
-                    <span class="result">→ Тёмный_Лорд (❗ кричит): Ты предатель!</span>
-                </div>
-                <div class="command">
-                    <span class="example">/slap Тёмный_Лорд</span>
-                    <span class="result">→ Светлый_Маг бьёт Тёмного_Лорда по щеке!</span>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <footer>
-        РП Бот • v1.4 • Работает в Telegram и ВКонтакте
-    </footer>
-    
-    <!-- Плашка "Написать в ВК" -->
-    <div class="support-banner" id="supportBanner">
-        <img src="https://vk.com/images/icons/favicons/fav_logo.ico" class="vk-icon" alt="VK">
-        <div class="support-text">Нужна помощь? Напишите нам в сообщения сообщества</div>
-        <a href="https://vk.com/write229888170" class="support-link" id="supportLink">Написать в поддержку</a>
-        <div class="support-close" id="supportClose">×</div>
-    </div>
-    
-    <!-- Кнопка чата в углу экрана -->
-    <div class="chat-button" id="chatButton">
-        <img src="https://vk.com/images/icons/favicons/fav_logo.ico" alt="VK Support">
-        <span>Поддержка</span>
-    </div>
-    
+    <!-- Весь ваш существующий HTML-код -->
+    <!-- ... -->
+
+    <!-- Кнопка поддержки ВК -->
+    <a href="https://vk.com/im?sel=-229888170" 
+       class="vk-support-button" 
+       target="_blank"
+       id="vkSupportButton">
+        <img src="https://vk.com/images/icons/favicons/fav_logo.ico" alt="VK">
+        Поддержка
+    </a>
+
     <!-- Виджет сообщений ВК -->
     <div id="vk_community_messages" class="vk-msg-widget"></div>
-    
-    <div id="copiedMessage" class="copied-message">Скопировано!</div>
-    
+
     <script>
-        // Определение платформы
-        function detectPlatform() {
-            // Для ВКонтакте
-            if (typeof VK !== 'undefined' && VK.WebApp) {
+        // Замените этот ID на цифровой ID вашего сообщества ВК
+        const COMMUNITY_ID = ВАШ_ID_СООБЩЕСТВА; // Только цифры, без минуса!
+        
+        // Инициализация виджета ВК
+        function initVKWidget() {
+            if (typeof VK === 'undefined') {
+                console.log("VK API не загружен, загружаем...");
+                loadVKAPI();
+                return;
+            }
+            
+            try {
+                VK.Widgets.CommunityMessages("vk_community_messages", COMMUNITY_ID, {
+                    widgetPosition: "right",
+                    disableNewMessagesSound: "0",
+                    expanded: "0",
+                    tooltipButtonText: "Написать нам",
+                    welcomeScreen: "1"
+                });
+                console.log("Виджет сообщений ВК инициализирован");
+            } catch (e) {
+                console.error("Ошибка инициализации виджета ВК:", e);
+            }
+        }
+        
+        // Загрузка API ВК
+        function loadVKAPI() {
+            const script = document.createElement('script');
+            script.src = 'https://vk.com/js/api/openapi.js?169';
+            script.onload = function() {
+                console.log("VK API загружен");
+                initVKWidget();
+            };
+            script.onerror = function() {
+                console.error("Не удалось загрузить VK API");
+                document.getElementById('vkSupportButton').style.display = 'flex';
+            };
+            document.body.appendChild(script);
+        }
+        
+        // Инициализация при загрузке страницы
+        document.addEventListener('DOMContentLoaded', function() {
+            // Определение платформы
+            const isVK = typeof VK !== 'undefined' && VK.WebApp;
+            const isTelegram = typeof Telegram !== 'undefined' && Telegram.WebApp;
+            
+            // Для ВК
+            if (isVK) {
+                VK.WebApp.init();
                 document.getElementById('platformIndicator').textContent = 'VK';
                 document.getElementById('platformIndicator').style.backgroundColor = '#5181B8';
-                document.getElementById('vk-start-note').style.display = 'block';
                 
-                // Адаптация под VK Mini Apps
-                VK.WebApp.init();
-                return 'vk';
-            }
+                // В приложении VK используем родной интерфейс
+                document.getElementById('vkSupportButton').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    VK.callMethod('openChat', -COMMUNITY_ID);
+                });
+            } 
             // Для Telegram
-            else if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+            else if (isTelegram) {
                 Telegram.WebApp.ready();
                 Telegram.WebApp.expand();
-                Telegram.WebApp.setHeaderColor('#2AABEE');
-                Telegram.WebApp.setBackgroundColor('#F9F9F9');
-                Telegram.WebApp.MainButton.hide();
-                return 'telegram';
+                document.getElementById('vkSupportButton').style.display = 'none';
             }
-            // Для браузера
-            else {
-                return 'web';
-            }
-        }
-        
-        // Переключение вкладок
-        function openTab(tabName) {
-            const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => tab.classList.remove('active'));
             
-            const tabButtons = document.querySelectorAll('.tab');
-            tabButtons.forEach(btn => btn.classList.remove('active'));
+            // Инициализация виджета ВК
+            initVKWidget();
             
-            document.getElementById(tabName).classList.add('active');
-            event.currentTarget.classList.add('active');
-            
-            // Прокрутка к началу
-            window.scrollTo(0, 0);
-        }
-        
-        // Копирование текста
-        function copyToClipboard(text) {
-            navigator.clipboard.writeText(text).then(() => {
-                showCopiedMessage('Скопировано: ' + text.trim());
-            }).catch(err => {
-                alert('Не удалось скопировать: ' + err);
-            });
-        }
-        
-        // Показать сообщение
-        function showCopiedMessage(text) {
-            const msg = document.getElementById('copiedMessage');
-            msg.textContent = text || 'Скопировано!';
-            msg.classList.add('visible');
-            setTimeout(() => {
-                msg.classList.remove('visible');
-            }, 2000);
-        }
-        
-        // Текущая платформа
-        const currentPlatform = detectPlatform();
-        
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', () => {
-            // Адаптация под разные платформы
-            if (currentPlatform === 'vk') {
-                document.documentElement.style.setProperty('--primary', '#5181B8');
-                document.documentElement.style.setProperty('--secondary', '#5E81A8');
-                
-                // Инициализация виджета сообщений ВК
-                if (typeof VK !== 'undefined' && VK.Widgets) {
-                    VK.Widgets.CommunityMessages("vk_community_messages", 229888170, {
-                        expandTimeout: "5000",
-                        widgetPosition: "right",
-                        disableExpandChatSound: "1",
-                        tooltipButtonText: "Есть вопрос?"
-                    });
+            // Показываем кнопку, если виджет не загрузился
+            setTimeout(function() {
+                if (!document.querySelector('.vkui__widget')) {
+                    document.getElementById('vkSupportButton').style.display = 'flex';
                 }
-            }
-            else if (currentPlatform === 'telegram') {
-                document.documentElement.style.setProperty('--primary', '#2AABEE');
-                document.documentElement.style.setProperty('--secondary', '#3F8FD2');
-            }
-            
-            // Адаптация под мобильные устройства
-            if (window.innerWidth < 768) {
-                document.body.style.fontSize = '15px';
-            }
-            
-            // Управление плашкой поддержки
-            const supportBanner = document.getElementById('supportBanner');
-            const supportClose = document.getElementById('supportClose');
-            const supportLink = document.getElementById('supportLink');
-            const chatButton = document.getElementById('chatButton');
-            
-            // Показываем плашку только в браузере (не в VK/Telegram)
-            if (currentPlatform === 'web' && !localStorage.getItem('supportBannerClosed')) {
-                supportBanner.style.display = 'flex';
-            }
-            
-            // Закрытие плашки
-            if (supportClose) {
-                supportClose.addEventListener('click', () => {
-                    supportBanner.style.display = 'none';
-                    localStorage.setItem('supportBannerClosed', 'true');
-                });
-            }
-            
-            // Открытие чата в приложении VK
-            if (currentPlatform === 'vk' && supportLink) {
-                supportLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    VK.callMethod('openChat', 229888170);
-                });
-            }
-            
-            // Обработчик кнопки чата
-            chatButton.addEventListener('click', function() {
-                if (currentPlatform === 'vk' && typeof VK !== 'undefined') {
-                    VK.callMethod('openChat', 229888170);
-                } else {
-                    window.open('https://vk.com/write229888170', '_blank');
-                }
-            });
-            
-            // Скрываем кнопку чата, если открыто из VK (там есть свой интерфейс)
-            if (currentPlatform === 'vk') {
-                chatButton.style.display = 'none';
-            }
+            }, 3000);
         });
+        
+        // Все остальные функции (openTab, copyToClipboard и т.д.)
+        // ... остаются без изменений
     </script>
-    
-    <!-- Подключение VK API -->
-    <script src="https://vk.com/js/api/openapi.js?169" type="text/javascript"></script>
 </body>
 </html>
