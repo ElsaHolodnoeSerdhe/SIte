@@ -2,14 +2,15 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Emotion Bot - Полное руководство</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>РП Бот - Полное руководство</title>
     <style>
         :root {
-            --primary: #7360F2;
-            --secondary: #F260B6;
+            --primary: #6A5ACD;  /* Фиолетовый */
+            --secondary: #9370DB; /* Светло-фиолетовый */
             --dark: #2E2D4D;
             --light: #F5F5F5;
+            --text: #333333;
             --success: #4CAF50;
         }
         
@@ -17,114 +18,149 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
         
         body {
             background-color: var(--light);
-            color: var(--dark);
-            line-height: 1.6;
-            padding-bottom: 40px;
+            color: var(--text);
+            line-height: 1.5;
+            padding: 0;
+            margin: 0;
+            min-height: 100vh;
+            overflow-x: hidden;
         }
         
         header {
             background: linear-gradient(135deg, var(--primary), var(--secondary));
             color: white;
-            padding: 20px 0;
+            padding: 1.2rem 1rem;
             text-align: center;
-            border-radius: 0 0 20px 20px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-            margin-bottom: 30px;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
         
         h1 {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
+            font-size: 1.4rem;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.5rem;
         }
         
         .container {
-            max-width: 800px;
+            max-width: 100%;
+            padding: 0 1rem;
             margin: 0 auto;
-            padding: 0 20px;
         }
         
         .section {
             background: white;
             border-radius: 12px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            padding: 1.2rem;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
         }
         
         h2 {
             color: var(--primary);
-            margin-bottom: 15px;
-            font-size: 1.4rem;
+            margin-bottom: 1rem;
+            font-size: 1.2rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 0.5rem;
         }
         
         h3 {
-            margin: 15px 0 10px;
+            margin: 1rem 0 0.5rem;
             color: var(--secondary);
+            font-size: 1.1rem;
         }
         
         .command {
             background: var(--light);
             border-left: 4px solid var(--primary);
-            padding: 12px 15px;
-            margin: 10px 0;
+            padding: 0.8rem;
+            margin: 0.8rem 0;
             border-radius: 0 8px 8px 0;
-            position: relative;
+            word-break: break-word;
         }
         
         .command-name {
-            font-weight: bold;
+            font-weight: 600;
             color: var(--dark);
+            font-size: 0.95rem;
         }
         
         .command-desc {
-            margin-top: 5px;
+            margin-top: 0.3rem;
             color: #555;
+            font-size: 0.9rem;
         }
         
         .example {
             display: inline-block;
             background: rgba(0,0,0,0.05);
-            padding: 8px 12px;
+            padding: 0.4rem 0.8rem;
             border-radius: 6px;
-            font-family: monospace;
-            margin: 5px 0;
-            font-size: 0.9rem;
+            font-family: 'Courier New', monospace;
+            margin: 0.3rem 0;
+            font-size: 0.85rem;
+            width: 100%;
+            overflow-x: auto;
         }
         
         .result {
             display: block;
-            margin-top: 5px;
+            margin-top: 0.3rem;
             color: var(--success);
             font-style: italic;
+            font-size: 0.85rem;
         }
         
         .tab-container {
             display: flex;
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ddd;
+            overflow-x: auto;
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            background: white;
+            position: sticky;
+            top: 62px;
+            z-index: 9;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+        }
+        
+        .tab-container::-webkit-scrollbar {
+            display: none;
         }
         
         .tab {
-            padding: 10px 20px;
+            padding: 0.8rem 1rem;
             cursor: pointer;
             border-bottom: 3px solid transparent;
+            white-space: nowrap;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
         
         .tab.active {
             border-bottom: 3px solid var(--primary);
-            font-weight: bold;
+            color: var(--primary);
+            font-weight: 600;
         }
         
         .tab-content {
             display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
         
         .tab-content.active {
@@ -135,55 +171,84 @@
             background: var(--primary);
             color: white;
             border: none;
-            padding: 8px 15px;
+            padding: 0.5rem 1rem;
             border-radius: 6px;
             cursor: pointer;
-            margin-top: 10px;
-            transition: all 0.3s;
+            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            width: 100%;
+            transition: background 0.2s;
         }
         
-        .copy-btn:hover {
+        .copy-btn:active {
             background: var(--secondary);
+            transform: scale(0.98);
         }
         
         footer {
             text-align: center;
-            margin-top: 30px;
+            margin: 1.5rem 0;
             color: #777;
-            font-size: 0.9rem;
+            font-size: 0.8rem;
+            padding: 0 1rem;
         }
         
-        @media (max-width: 600px) {
+        /* Мобильные адаптации */
+        @media (max-width: 480px) {
             .section {
-                padding: 20px 15px;
+                padding: 1rem;
+                margin: 0.8rem 0;
+                border-radius: 0;
+            }
+            
+            header {
+                padding: 1rem;
             }
             
             h1 {
-                font-size: 1.5rem;
-            }
-            
-            h2 {
                 font-size: 1.2rem;
             }
+            
+            .tab {
+                padding: 0.7rem 0.8rem;
+                font-size: 0.85rem;
+            }
+        }
+        
+        /* Анимация копирования */
+        .copied-message {
+            position: fixed;
+            bottom: 1rem;
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--success);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            z-index: 100;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .visible {
+            opacity: 1;
         }
     </style>
 </head>
 <body>
     <header>
-        <div class="container">
-            <h1>🤖 Emotion Bot</h1>
-            <p>Полное руководство по использованию</p>
-        </div>
+        <h1>🎭 РП Бот</h1>
+        <p>Полное руководство по ролевым командам</p>
     </header>
     
+    <div class="tab-container">
+        <div class="tab active" onclick="openTab('commands')">📋 Команды</div>
+        <div class="tab" onclick="openTab('emotions')">🎭 Эмоции</div>
+        <div class="tab" onclick="openTab('actions')">🤝 Действия</div>
+        <div class="tab" onclick="openTab('examples')">✨ Примеры</div>
+    </div>
+    
     <div class="container">
-        <div class="tab-container">
-            <div class="tab active" onclick="openTab('commands')">Команды</div>
-            <div class="tab" onclick="openTab('emotions')">Эмоции</div>
-            <div class="tab" onclick="openTab('actions')">Действия</div>
-            <div class="tab" onclick="openTab('examples')">Примеры</div>
-        </div>
-        
         <!-- Команды -->
         <div id="commands" class="tab-content active">
             <div class="section">
@@ -196,15 +261,15 @@
                 
                 <div class="command">
                     <div class="command-name">/setnick [ник]</div>
-                    <div class="command-desc">Установить или изменить ваш никнейм</div>
-                    <span class="example">/setnick КотоПёс</span>
+                    <div class="command-desc">Установить ваш ролевой никнейм</div>
+                    <span class="example">/setnick Тёмный_Лорд</span>
                 </div>
                 
                 <div class="command">
                     <div class="command-name">/nick</div>
-                    <div class="command-desc">Показать ваш текущий никнейм</div>
+                    <div class="command-desc">Показать ваш текущий ник</div>
                     <span class="example">/nick</span>
-                    <span class="result">→ Ваш ник: КотоПёс</span>
+                    <span class="result">→ Ваш ник: Тёмный_Лорд</span>
                 </div>
             </div>
         </div>
@@ -213,29 +278,29 @@
         <div id="emotions" class="tab-content">
             <div class="section">
                 <h2>🎭 Эмоциональные префиксы</h2>
-                <p>Добавьте эти символы в начале сообщения:</p>
+                <p>Добавьте в начало сообщения:</p>
                 
                 <div class="command">
                     <div class="command-name">!!!!</div>
-                    <div class="command-desc">Важное сообщение</div>
-                    <span class="example">!!!! Это срочно!</span>
-                    <span class="result">→ Иван (❗ говорит важно): Это срочно!</span>
+                    <div class="command-desc">Важное/громкое сообщение</div>
+                    <span class="example">!!!! Внимание всем!</span>
+                    <span class="result">→ Тёмный_Лорд (❗ кричит): Внимание всем!</span>
                     <button class="copy-btn" onclick="copyToClipboard('!!!! ')">Копировать</button>
                 </div>
                 
                 <div class="command">
                     <div class="command-name">????</div>
-                    <div class="command-desc">Задать вопрос</div>
-                    <span class="example">???? Ты где?</span>
-                    <span class="result">→ Маша (❓ спрашивает): Ты где?</span>
+                    <div class="command-desc">Вопрос/недоумение</div>
+                    <span class="example">???? Что происходит?</span>
+                    <span class="result">→ Светлый_Маг (❓ спрашивает): Что происходит?</span>
                     <button class="copy-btn" onclick="copyToClipboard('???? ')">Копировать</button>
                 </div>
                 
                 <div class="command">
                     <div class="command-name">^^^^</div>
-                    <div class="command-desc">Выразить радость</div>
-                    <span class="example">^^^^ Ура!</span>
-                    <span class="result">→ Пётр (☺ радуется): Ура!</span>
+                    <div class="command-desc">Радость/восторг</div>
+                    <span class="example">^^^^ Наконец-то!</span>
+                    <span class="result">→ Весёлый_Гном (☺ радуется): Наконец-то!</span>
                     <button class="copy-btn" onclick="copyToClipboard('^^^^ ')">Копировать</button>
                 </div>
             </div>
@@ -244,31 +309,31 @@
         <!-- Действия -->
         <div id="actions" class="tab-content">
             <div class="section">
-                <h2>🤝 Команды действий</h2>
-                <p>Взаимодействуйте с другими пользователями:</p>
+                <h2>🤝 Ролевые действия</h2>
+                <p>Взаимодействуйте с другими персонажами:</p>
                 
                 <div class="command">
                     <div class="command-name">/hug [ник]</div>
-                    <div class="command-desc">Обнять пользователя</div>
-                    <span class="example">/hug @Дружок</span>
-                    <span class="result">→ Иван крепко обнимает Дружка!</span>
+                    <div class="command-desc">Обнять персонажа</div>
+                    <span class="example">/hug @Светлый_Маг</span>
+                    <span class="result">→ Тёмный_Лорд крепко обнимает Светлого_Мага!</span>
                     <button class="copy-btn" onclick="copyToClipboard('/hug ')">Копировать</button>
                 </div>
                 
                 <div class="command">
-                    <div class="command-name">/kiss [ник]</div>
-                    <div class="command-desc">Поцеловать пользователя</div>
-                    <span class="example">/kiss Маша</span>
-                    <span class="result">→ Пётр нежно целует Машу!</span>
-                    <button class="copy-btn" onclick="copyToClipboard('/kiss ')">Копировать</button>
+                    <div class="command-name">/slap [ник]</div>
+                    <div class="command-desc">Дать пощечину</div>
+                    <span class="example">/slap Наглый_Вор</span>
+                    <span class="result">→ Светлый_Маг даёт пощечину Наглому_Вору!</span>
+                    <button class="copy-btn" onclick="copyToClipboard('/slap ')">Копировать</button>
                 </div>
                 
                 <div class="command">
-                    <div class="command-name">/slap [ник]</div>
-                    <div class="command-desc">Дать подзатыльник</div>
-                    <span class="example">/slap Шалун</span>
-                    <span class="result">→ Оля отправляет Шалуна в нокаут!</span>
-                    <button class="copy-btn" onclick="copyToClipboard('/slap ')">Копировать</button>
+                    <div class="command-name">/kill [ник]</div>
+                    <div class="command-desc">Убить персонажа (РП)</div>
+                    <span class="example">/kill Тёмный_Лорд</span>
+                    <span class="result">→ Светлый_Маг наносит смертельный удар Тёмному_Лорду!</span>
+                    <button class="copy-btn" onclick="copyToClipboard('/kill ')">Копировать</button>
                 </div>
             </div>
         </div>
@@ -276,78 +341,104 @@
         <!-- Примеры -->
         <div id="examples" class="tab-content">
             <div class="section">
-                <h2>🌟 Примеры использования</h2>
+                <h2>✨ Ролевые сценарии</h2>
                 
-                <h3>Сценарий 1: Установка ника</h3>
+                <h3>Сценарий 1: Встреча</h3>
                 <div class="command">
-                    <span class="example">/setnick Лис</span>
-                    <span class="result">→ Ваш новый ник: Лис</span>
-                </div>
-                
-                <h3>Сценарий 2: Общение с эмоциями</h3>
-                <div class="command">
-                    <span class="example">^^^^ Привет!</span>
-                    <span class="result">→ Лис (☺ радуется): Привет!</span>
+                    <span class="example">^^^^ Наконец-то ты здесь!</span>
+                    <span class="result">→ Весёлый_Гном (☺ радуется): Наконец-то ты здесь!</span>
                 </div>
                 <div class="command">
-                    <span class="example">???? Как дела?</span>
-                    <span class="result">→ Дружок (❓ спрашивает): Как дела?</span>
-                </div>
-                <div class="command">
-                    <span class="example">++++ Отлично!</span>
-                    <span class="result">→ Лис (👍 одобряет): Отлично!</span>
+                    <span class="example">/hug Весёлый_Гном</span>
+                    <span class="result">→ Светлый_Маг нежно обнимает Весёлого_Гнома!</span>
                 </div>
                 
-                <h3>Сценарий 3: Взаимодействия</h3>
+                <h3>Сценарий 2: Конфликт</h3>
                 <div class="command">
-                    <span class="example">/hug Дружок</span>
-                    <span class="result">→ Лис крепко обнимает Дружка!</span>
+                    <span class="example">!!!! Ты предатель!</span>
+                    <span class="result">→ Тёмный_Лорд (❗ кричит): Ты предатель!</span>
                 </div>
                 <div class="command">
-                    <span class="example">/kiss Маша</span>
-                    <span class="result">→ Лис страстно целует Машу!</span>
+                    <span class="example">/slap Тёмный_Лорд</span>
+                    <span class="result">→ Светлый_Маг бьёт Тёмного_Лорда по щеке!</span>
+                </div>
+                
+                <h3>Сценарий 3: Трагедия</h3>
+                <div class="command">
+                    <span class="example">//// *кашляет кровью*</span>
+                    <span class="result">→ Тёмный_Лорд (😳 смущается): *кашляет кровью*</span>
+                </div>
+                <div class="command">
+                    <span class="example">/kill Тёмный_Лорд</span>
+                    <span class="result">→ Светлый_Маг наносит смертельный удар Тёмному_Лорду!</span>
                 </div>
             </div>
         </div>
     </div>
     
     <footer>
-        <div class="container">
-            <p>© 2023 Emotion Bot | Все команды работают в любом чате с ботом</p>
-        </div>
+        РП Бот • Используйте команды в любом чате • v1.0
     </footer>
     
+    <div id="copiedMessage" class="copied-message">Скопировано!</div>
+    
     <script>
+        // Адаптация для Telegram WebApp
+        function setupWebApp() {
+            if (typeof Telegram !== 'undefined' && Telegram.WebApp) {
+                Telegram.WebApp.ready();
+                Telegram.WebApp.expand();
+                Telegram.WebApp.setHeaderColor('#6A5ACD');
+                Telegram.WebApp.setBackgroundColor('#F5F5F5');
+                
+                // Скрываем стандартную кнопку "Закрыть"
+                Telegram.WebApp.MainButton.hide();
+            }
+        }
+        
         // Переключение вкладок
         function openTab(tabName) {
             const tabs = document.querySelectorAll('.tab-content');
-            tabs.forEach(tab => {
-                tab.classList.remove('active');
-            });
+            tabs.forEach(tab => tab.classList.remove('active'));
             
             const tabButtons = document.querySelectorAll('.tab');
-            tabButtons.forEach(button => {
-                button.classList.remove('active');
-            });
+            tabButtons.forEach(btn => btn.classList.remove('active'));
             
             document.getElementById(tabName).classList.add('active');
             event.currentTarget.classList.add('active');
+            
+            // Прокрутка к началу
+            window.scrollTo(0, 0);
         }
         
-        // Копирование в буфер обмена
+        // Копирование текста
         function copyToClipboard(text) {
             navigator.clipboard.writeText(text).then(() => {
-                alert('Скопировано: ' + text);
+                showCopiedMessage();
+            }).catch(err => {
+                alert('Не удалось скопировать: ' + err);
             });
         }
         
-        // Интеграция с Telegram WebApp
-        if (typeof Telegram !== 'undefined') {
-            Telegram.WebApp.ready();
-            Telegram.WebApp.expand();
-            Telegram.WebApp.setHeaderColor('#7360F2');
-            Telegram.WebApp.setBackgroundColor('#F5F5F5');
+        // Показать сообщение о копировании
+        function showCopiedMessage() {
+            const msg = document.getElementById('copiedMessage');
+            msg.classList.add('visible');
+            setTimeout(() => {
+                msg.classList.remove('visible');
+            }, 2000);
         }
+        
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', () => {
+            setupWebApp();
+            
+            // Адаптация высоты для мобильных устройств
+            if (window.innerWidth < 768) {
+                document.documentElement.style.setProperty('--primary', '#7B68EE');
+                document.body.style.fontSize = '15px';
+            }
+        });
     </script>
 </body>
 </html>
