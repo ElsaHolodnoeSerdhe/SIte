@@ -15,6 +15,30 @@
             --success: #4BB34B;
             --warning: #FFA000;
             --info: #2196F3;
+            
+            --bg-color: #F9F9F9;
+            --text-color: #222222;
+            --card-bg: #FFFFFF;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            --border-color: #eee;
+        }
+        
+        .dark-mode {
+            --primary: #6B9BD2;
+            --secondary: #7A9FC8;
+            --telegram: #2AABEE;
+            --dark: #E0E0E0;
+            --light: #1E1E1E;
+            --text: #E0E0E0;
+            --success: #5CC35C;
+            --warning: #FFB740;
+            --info: #42A5F5;
+            
+            --bg-color: #121212;
+            --text-color: #E0E0E0;
+            --card-bg: #1E1E1E;
+            --card-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            --border-color: #333;
         }
         
         * {
@@ -26,13 +50,14 @@
         }
         
         body {
-            background-color: var(--light);
-            color: var(--text);
+            background-color: var(--bg-color);
+            color: var(--text-color);
             line-height: 1.6;
             padding: 0;
             margin: 0;
             min-height: 100vh;
             overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
         }
         
         header {
@@ -83,25 +108,28 @@
         }
         
         .intro-section {
-            background: white;
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 1.5rem;
             margin: 1.5rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: var(--card-shadow);
             border-left: 4px solid var(--info);
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
         
         .intro-text {
             margin-bottom: 1rem;
-            color: #444;
+            color: var(--text-color);
+            opacity: 0.9;
         }
         
         .section {
-            background: white;
+            background: var(--card-bg);
             border-radius: 12px;
             padding: 1.5rem;
             margin: 1.5rem 0;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: var(--card-shadow);
+            transition: background-color 0.3s, box-shadow 0.3s;
         }
         
         h2 {
@@ -112,7 +140,7 @@
             align-items: center;
             gap: 0.7rem;
             padding-bottom: 0.5rem;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid var(--border-color);
         }
         
         h3 {
@@ -149,14 +177,16 @@
         
         .command-desc {
             margin-top: 0.5rem;
-            color: #555;
+            color: var(--text-color);
+            opacity: 0.9;
             font-size: 0.95rem;
             line-height: 1.5;
         }
         
         .command-usage {
             font-size: 0.85rem;
-            color: #666;
+            color: var(--text-color);
+            opacity: 0.8;
             margin-top: 0.3rem;
             font-style: italic;
         }
@@ -172,6 +202,12 @@
             width: 100%;
             overflow-x: auto;
             border-left: 3px solid var(--primary);
+            color: var(--text-color);
+            transition: background-color 0.3s;
+        }
+        
+        .dark-mode .example {
+            background: rgba(255,255,255,0.1);
         }
         
         .result {
@@ -191,6 +227,11 @@
             border-radius: 0 8px 8px 0;
             margin: 1rem 0;
             font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        
+        .dark-mode .note {
+            background-color: rgba(255, 160, 0, 0.2);
         }
         
         .tip {
@@ -200,6 +241,11 @@
             border-radius: 0 8px 8px 0;
             margin: 1rem 0;
             font-size: 0.9rem;
+            color: var(--text-color);
+        }
+        
+        .dark-mode .tip {
+            background-color: rgba(33, 150, 243, 0.2);
         }
         
         .tab-container {
@@ -207,11 +253,12 @@
             overflow-x: auto;
             scrollbar-width: none;
             -ms-overflow-style: none;
-            background: white;
+            background: var(--card-bg);
             position: sticky;
             top: 0;
             z-index: 9;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+            transition: background-color 0.3s;
         }
         
         .tab-container::-webkit-scrollbar {
@@ -227,6 +274,7 @@
             font-weight: 500;
             flex-shrink: 0;
             transition: all 0.2s;
+            color: var(--text-color);
         }
         
         .tab:hover {
@@ -282,7 +330,8 @@
         footer {
             text-align: center;
             margin: 2rem 0;
-            color: #777;
+            color: var(--text-color);
+            opacity: 0.7;
             font-size: 0.85rem;
             padding: 0 1.5rem;
         }
@@ -319,6 +368,35 @@
             opacity: 1;
         }
         
+        /* Кнопка переключения темы */
+        .theme-toggle {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 100;
+            transition: all 0.3s;
+        }
+        
+        .theme-toggle:hover {
+            transform: scale(1.1);
+        }
+        
+        .theme-toggle svg {
+            width: 24px;
+            height: 24px;
+        }
+        
         @media (max-width: 768px) {
             .container {
                 padding: 0 1rem;
@@ -331,10 +409,36 @@
             h2 {
                 font-size: 1.3rem;
             }
+            
+            .theme-toggle {
+                width: 40px;
+                height: 40px;
+                bottom: 15px;
+                left: 15px;
+            }
+            
+            .theme-toggle svg {
+                width: 20px;
+                height: 20px;
+            }
         }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" id="themeToggle">
+        <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="5"></circle>
+            <line x1="12" y1="1" x2="12" y2="3"></line>
+            <line x1="12" y1="21" x2="12" y2="23"></line>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line>
+            <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line>
+            <line x1="1" y1="12" x2="3" y2="12"></line>
+            <line x1="21" y1="12" x2="23" y2="12"></line>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line>
+            <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>
+        </svg>
+    </button>
+
     <header>
         <h1>🎭 РП Бот <span id="platformIndicator" class="platform-indicator">Telegram</span><span class="version-badge">v1.4</span></h1>
         <p class="header-subtitle">Актуальное руководство по всем доступным командам</p>
@@ -788,12 +892,45 @@
             });
         }
         
+        // Переключение темы
+        function toggleTheme() {
+            const body = document.body;
+            body.classList.toggle('dark-mode');
+            
+            const isDark = body.classList.contains('dark-mode');
+            localStorage.setItem('darkMode', isDark);
+            
+            // Изменение иконки
+            const themeIcon = document.getElementById('themeIcon');
+            if (isDark) {
+                themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+            } else {
+                themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+            }
+        }
+        
+        // Проверка сохраненной темы
+        function checkSavedTheme() {
+            const savedTheme = localStorage.getItem('darkMode');
+            if (savedTheme === 'true') {
+                document.body.classList.add('dark-mode');
+                const themeIcon = document.getElementById('themeIcon');
+                themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+            }
+        }
+        
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             const platform = detectPlatform();
             
             // Инициализируем виджет ВК для всех платформ
             initVKWidget();
+            
+            // Проверяем сохраненную тему
+            checkSavedTheme();
+            
+            // Назначаем обработчик для кнопки темы
+            document.getElementById('themeToggle').addEventListener('click', toggleTheme);
             
             // Адаптация под мобильные устройства
             if (window.innerWidth < 768) {
