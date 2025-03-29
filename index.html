@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>РП Бот - Актуальное руководство</title>
+    <title>РП Бот - Полное руководство</title>
     <style>
         :root {
             --primary: #5181B8;
@@ -15,6 +15,7 @@
             --success: #4BB34B;
             --warning: #FFA000;
             --info: #2196F3;
+            --danger: #E53935;
             
             --bg-color: #F9F9F9;
             --text-color: #222222;
@@ -33,6 +34,7 @@
             --success: #5CC35C;
             --warning: #FFB740;
             --info: #42A5F5;
+            --danger: #EF5350;
             
             --bg-color: #121212;
             --text-color: #E0E0E0;
@@ -67,7 +69,7 @@
             text-align: center;
             position: sticky;
             top: 0;
-            z-index: 10;
+            z-index: 100;
             box-shadow: 0 2px 15px rgba(0,0,0,0.1);
         }
         
@@ -107,6 +109,129 @@
             vertical-align: middle;
         }
         
+        /* Кнопка поиска */
+        .search-btn {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 90;
+            transition: all 0.3s;
+        }
+        
+        .search-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        /* Модальное окно поиска */
+        .search-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 200;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+        
+        .search-modal.active {
+            display: flex;
+            opacity: 1;
+        }
+        
+        .search-modal-content {
+            background: var(--card-bg);
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow: hidden;
+            box-shadow: 0 5px 30px rgba(0,0,0,0.3);
+            transform: translateY(20px);
+            transition: transform 0.3s;
+        }
+        
+        .search-modal.active .search-modal-content {
+            transform: translateY(0);
+        }
+        
+        .search-modal-header {
+            padding: 1rem;
+            background: var(--primary);
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .search-modal-close {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+        
+        .search-modal-body {
+            padding: 1rem;
+        }
+        
+        .search-modal-input {
+            width: 100%;
+            padding: 1rem;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            background: var(--card-bg);
+            color: var(--text-color);
+        }
+        
+        .search-results {
+            max-height: 60vh;
+            overflow-y: auto;
+        }
+        
+        .search-result-item {
+            padding: 1rem;
+            border-bottom: 1px solid var(--border-color);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .search-result-item:hover {
+            background: rgba(81, 129, 184, 0.1);
+        }
+        
+        .search-result-category {
+            font-size: 0.8rem;
+            color: var(--primary);
+            margin-bottom: 0.3rem;
+        }
+        
+        .search-result-empty {
+            padding: 2rem;
+            text-align: center;
+            color: var(--text-color);
+            opacity: 0.7;
+        }
+        
+        /* Основные стили */
         .intro-section {
             background: var(--card-bg);
             border-radius: 12px;
@@ -130,6 +255,7 @@
             margin: 1.5rem 0;
             box-shadow: var(--card-shadow);
             transition: background-color 0.3s, box-shadow 0.3s;
+            position: relative;
         }
         
         h2 {
@@ -141,6 +267,7 @@
             gap: 0.7rem;
             padding-bottom: 0.5rem;
             border-bottom: 1px solid var(--border-color);
+            scroll-margin-top: 120px;
         }
         
         h3 {
@@ -158,12 +285,12 @@
             margin: 1rem 0;
             border-radius: 0 8px 8px 0;
             word-break: break-word;
-            transition: all 0.2s ease;
+            transition: all 0.3s ease;
         }
         
         .command:hover {
-            transform: translateX(3px);
-            box-shadow: 2px 2px 8px rgba(0,0,0,0.1);
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
         }
         
         .command-name {
@@ -255,8 +382,8 @@
             -ms-overflow-style: none;
             background: var(--card-bg);
             position: sticky;
-            top: 0;
-            z-index: 9;
+            top: 60px;
+            z-index: 90;
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             transition: background-color 0.3s;
         }
@@ -320,11 +447,61 @@
         
         .copy-btn:hover {
             background: #3a6ea5;
-            transform: translateY(-1px);
+            transform: translateY(-2px);
         }
         
         .copy-btn:active {
             transform: translateY(0);
+        }
+        
+        /* FAQ */
+        .faq-item {
+            margin-bottom: 0.5rem;
+            border-radius: 8px;
+            overflow: hidden;
+            background: var(--light);
+            transition: all 0.3s;
+        }
+        
+        .dark-mode .faq-item {
+            background: rgba(255,255,255,0.05);
+        }
+        
+        .faq-question {
+            padding: 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: 500;
+        }
+        
+        .faq-icon {
+            transition: transform 0.3s;
+        }
+        
+        .faq-answer {
+            padding: 0 1rem;
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease, padding 0.3s ease;
+        }
+        
+        .faq-item.active .faq-answer {
+            padding: 0 1rem 1rem;
+            max-height: 500px;
+        }
+        
+        .faq-item.active .faq-icon {
+            transform: rotate(180deg);
+        }
+        
+        .user-mention {
+            color: var(--primary);
+            font-weight: 500;
+            background: rgba(81, 129, 184, 0.1);
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
         }
         
         footer {
@@ -410,21 +587,26 @@
                 font-size: 1.3rem;
             }
             
-            .theme-toggle {
-                width: 40px;
-                height: 40px;
+            .theme-toggle, .search-btn {
+                width: 45px;
+                height: 45px;
                 bottom: 15px;
-                left: 15px;
             }
             
-            .theme-toggle svg {
-                width: 20px;
-                height: 20px;
+            .search-btn {
+                bottom: 75px;
             }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
     </style>
 </head>
 <body>
+    <!-- Кнопка переключения темы -->
     <button class="theme-toggle" id="themeToggle">
         <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="12" cy="12" r="5"></circle>
@@ -439,23 +621,35 @@
         </svg>
     </button>
 
+    <!-- Кнопка поиска -->
+    <button class="search-btn" id="searchBtn">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="11" cy="11" r="8"></circle>
+            <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+        </svg>
+    </button>
+
+    <!-- Шапка сайта -->
     <header>
         <h1>🎭 РП Бот <span id="platformIndicator" class="platform-indicator">Telegram</span><span class="version-badge">v1.4</span></h1>
-        <p class="header-subtitle">Актуальное руководство по всем доступным командам</p>
+        <p class="header-subtitle">Полное руководство по всем командам и возможностям</p>
     </header>
     
+    <!-- Навигационные вкладки -->
     <div class="tab-container">
         <div class="tab active" onclick="openTab('commands')">📋 Основные</div>
         <div class="tab" onclick="openTab('emotions')">🎭 Эмоции</div>
         <div class="tab" onclick="openTab('actions')">🤝 Действия</div>
-        <div class="tab" onclick="openTab('examples')">✨ Примеры</div>
+        <div class="tab" onclick="openTab('news')">📰 Новости</div>
+        <div class="tab" onclick="openTab('faq')">❓ FAQ</div>
     </div>
     
+    <!-- Основное содержимое -->
     <div class="container">
         <div class="intro-section">
             <h2>👋 Добро пожаловать в руководство по РП боту v1.4</h2>
-            <p class="intro-text">Это руководство полностью синхронизировано с текущей версией бота и содержит только реально доступные команды.</p>
-            <p class="intro-text">Все примеры и описания проверены на основе актуального кода бота.</p>
+            <p class="intro-text">Это полное руководство по всем командам и возможностям бота для ролевых игр.</p>
+            <p class="intro-text">Используйте кнопку поиска внизу экрана для быстрого поиска команд.</p>
         </div>
         
         <!-- Основные команды -->
@@ -464,7 +658,7 @@
                 <h2>📋 Основные команды</h2>
                 <p>Эти команды позволяют настроить бота и управлять базовыми функциями.</p>
                 
-                <div class="command">
+                <div class="command" data-category="Основные" data-search="start начало старт">
                     <div class="command-name">/start</div>
                     <div class="command-desc">Начальное приветствие и краткая инструкция по использованию бота. Показывает основные возможности и правила использования.</div>
                     <div id="vk-start-note" class="note" style="display: none;">
@@ -472,7 +666,7 @@
                     </div>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Основные" data-search="setnick установить ник смена ника nickname">
                     <div class="command-name">/setnick [никнейм]</div>
                     <div class="command-desc">Устанавливает ваш ролевой никнейм, который будет отображаться при использовании команд. Поддерживает любые языки.</div>
                     <div class="command-usage">Максимальная длина ника - 32 символа. Можно использовать пробелы и большинство специальных символов.</div>
@@ -487,7 +681,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Основные" data-search="nick никнейм текущий ник мой ник">
                     <div class="command-name">/nick</div>
                     <div class="command-desc">Показывает ваш текущий установленный никнейм. Если ник не установлен, будет показано ваше имя из профиля.</div>
                     <span class="example">/nick</span>
@@ -501,7 +695,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Основные" data-search="commands команды список команд помощь help">
                     <div class="command-name">/commands</div>
                     <div class="command-desc">Показывает список всех доступных команд бота с краткими описаниями.</div>
                     <button class="copy-btn" onclick="copyToClipboard('/commands')">
@@ -525,7 +719,7 @@
                 <h2>🎭 Эмоции и жесты</h2>
                 <p>Эти префиксы позволяют выражать эмоции и настроение вашего персонажа. Добавьте их в начало сообщения.</p>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search="!!!! крик кричать громко важно">
                     <div class="command-name">!!!!</div>
                     <div class="command-desc">Используется для громких, важных или эмоциональных сообщений. Показывает, что ваш персонаж кричит или говорит очень выразительно.</div>
                     <span class="example">!!!! Внимание всем жителям замка!</span>
@@ -542,7 +736,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search="???? вопрос вопрос недоумение">
                     <div class="command-name">????</div>
                     <div class="command-desc">Показывает, что ваш персонаж задаёт вопрос или выражает недоумение. Отлично подходит для диалогов.</div>
                     <span class="example">???? Что это было?</span>
@@ -556,7 +750,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search="^^^^ радость рад счастье восторг">
                     <div class="command-name">^^^^</div>
                     <div class="command-desc">Выражает радость, восторг или волнение. Показывает, что ваш персонаж счастлив или взволнован.</div>
                     <span class="example">^^^^ Наконец-то ты вернулся!</span>
@@ -570,7 +764,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search="//// смущение смущен стыд стыдно">
                     <div class="command-name">////</div>
                     <div class="command-desc">Показывает смущение, застенчивость или неловкость персонажа.</div>
                     <span class="example">//// *краснеет* Я не знаю что сказать...</span>
@@ -584,7 +778,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search="++++ одобрение согласие поддержка да">
                     <div class="command-name">++++</div>
                     <div class="command-desc">Выражает одобрение, согласие или поддержку.</div>
                     <span class="example">++++ Это отличная идея!</span>
@@ -598,7 +792,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search="---- несогласие отказ отрицание нет">
                     <div class="command-name">----</div>
                     <div class="command-desc">Выражает несогласие, отказ или отрицание.</div>
                     <span class="example">---- Я не согласен с этим!</span>
@@ -612,7 +806,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search=">>>> срочно важно горячность горячо">
                     <div class="command-name">>>>></div>
                     <div class="command-desc">Показывает срочность, важность или горячность сообщения.</div>
                     <span class="example">>>>> Нам нужно действовать сейчас же!</span>
@@ -626,7 +820,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search="<<<< усталость устал сонливость спать">
                     <div class="command-name"><<<<</div>
                     <div class="command-desc">Выражает усталость, сонливость или отсутствие энергии.</div>
                     <span class="example"><<<< *зевает* Я так устал...</span>
@@ -640,7 +834,7 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Эмоции" data-search="** действие действия описание звездочки">
                     <div class="command-name">**действие</div>
                     <div class="command-desc">Позволяет описать действие вашего персонажа. Текст будет выделен жирным.</div>
                     <span class="example">**достаёт меч из ножен</span>
@@ -666,11 +860,11 @@
                 <h2>🤝 Взаимодействия между персонажами</h2>
                 <p>Эти команды позволяют вашим персонажам взаимодействовать друг с другом в ролевой игре.</p>
                 
-                <div class="command">
+                <div class="command" data-category="Действия" data-search="hug обнять объятия обнимашки">
                     <div class="command-name">/hug [ник]</div>
                     <div class="command-desc">Ваш персонаж обнимает другого персонажа. Можно использовать как для дружеских, так и для более эмоциональных объятий.</div>
-                    <div class="command-usage">Можно добавить описание после ника, например: /hug @Друг сильно</div>
-                    <span class="example">/hug @Светлый_Маг</span>
+                    <div class="command-usage">Можно добавить описание после ника, например: /hug Друг сильно</div>
+                    <span class="example">/hug Светлый_Маг</span>
                     <span class="result">→ Тёмный_Лорд крепко обнимает Светлого_Мага, показывая неожиданную нежность</span>
                     <button class="copy-btn" onclick="copyToClipboard('/hug ')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -681,11 +875,11 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Действия" data-search="slap пощечина ударить шлепнуть бить">
                     <div class="command-name">/slap [ник]</div>
                     <div class="command-desc">Ваш персонаж даёт пощечину другому персонажу. Используется для выражения гнева, раздражения или как шутливый жест.</div>
-                    <div class="command-usage">Можно указать причину: /slap @Наглец за грубость</div>
-                    <span class="example">/slap @Наглый_Вор</span>
+                    <div class="command-usage">Можно указать причину: /slap Наглец за грубость</div>
+                    <span class="example">/slap Наглый_Вор</span>
                     <span class="result">→ Светлый_Маг с силой бьёт Наглого_Вора по щеке, негодуя от его последних слов</span>
                     <div class="note">
                         <strong>Примечание:</strong> Пожалуйста, используйте эту команду только в рамках ролевой игры и с согласия других участников.
@@ -699,11 +893,11 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Действия" data-search="kiss поцеловать поцелуй чмок любовь">
                     <div class="command-name">/kiss [ник]</div>
                     <div class="command-desc">Ваш персонаж целует другого персонажа. Можно использовать для романтических или дружеских поцелуев.</div>
-                    <div class="command-usage">Можно уточнить куда: /kiss @Возлюбленная в щёчку</div>
-                    <span class="example">/kiss @Возлюбленная</span>
+                    <div class="command-usage">Можно уточнить куда: /kiss Возлюбленная в щёчку</div>
+                    <span class="example">/kiss Возлюбленная</span>
                     <span class="result">→ Романтик нежно целует Возлюбленную, глядя ей в глаза</span>
                     <button class="copy-btn" onclick="copyToClipboard('/kiss ')">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -714,11 +908,11 @@
                     </button>
                 </div>
                 
-                <div class="command">
+                <div class="command" data-category="Действия" data-search="punch удар кулак драка пунш">
                     <div class="command-name">/punch [ник]</div>
                     <div class="command-desc">Ваш персонаж бьёт другого персонажа кулаком. Используется для драк или жёстких взаимодействий.</div>
-                    <div class="command-usage">Можно указать куда: /punch @Злодей в живот</div>
-                    <span class="example">/punch @Злодей</span>
+                    <div class="command-usage">Можно указать куда: /punch Злодей в живот</div>
+                    <span class="example">/punch Злодей</span>
                     <span class="result">→ Боец со всей силы бьёт Злодея кулаком в лицо</span>
                     <div class="note">
                         <strong>Важно:</strong> Используйте эту команду только в рамках ролевой игры и с согласия других участников.
@@ -733,73 +927,137 @@
                 </div>
                 
                 <div class="tip">
-                    💡 <strong>Совет:</strong> Вы можете добавлять к командам описания, чтобы сделать взаимодействия более выразительными. Например: "/hug @Друг крепко, радуясь встрече"
+                    💡 <strong>Совет:</strong> Вы можете добавлять к командам описания, чтобы сделать взаимодействия более выразительными. Например: "/hug Друг крепко, радуясь встрече"
                 </div>
             </div>
         </div>
         
-        <!-- Примеры -->
-        <div id="examples" class="tab-content">
+        <!-- Новости -->
+        <div id="news" class="tab-content">
             <div class="section">
-                <h2>✨ Примеры ролевых сцен</h2>
-                <p>Здесь вы найдёте примеры использования команд в различных ролевых ситуациях.</p>
+                <h2>📰 Последние новости и обновления</h2>
                 
-                <h3>Сценарий 1: Радостная встреча</h3>
-                <div class="command">
-                    <span class="example">^^^^ *замечает старого друга* Наконец-то ты здесь!</span>
-                    <span class="result">→ Весёлый_Гном (☺ рад, широко улыбаясь): *замечает старого друга* Наконец-то ты здесь!</span>
-                </div>
-                <div class="command">
-                    <span class="example">/hug @Весёлый_Гном крепко</span>
-                    <span class="result">→ Светлый_Маг крепко обнимает Весёлого_Гнома, скучавший по их дружеским беседам</span>
-                </div>
-                <div class="command">
-                    <span class="example">???? Как прошло твоё путешествие?</span>
-                    <span class="result">→ Весёлый_Гном (❓ с интересом): Как прошло твоё путешествие?</span>
+                <div class="news-item">
+                    <h3>Версия 1.4 — Новые эмоции и команды</h3>
+                    <p class="news-date">15 октября 2023</p>
+                    <p>Мы рады представить новое обновление бота, которое включает:</p>
+                    <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                        <li>3 новых эмоциональных префикса: <code>++++</code>, <code>----</code> и <code>>>></code></li>
+                        <li>Команды взаимодействия между персонажами: <code>/hug</code>, <code>/slap</code>, <code>/kiss</code></li>
+                        <li>Улучшенную систему ников (до 32 символов)</li>
+                        <li>Исправление мелких ошибок</li>
+                    </ul>
                 </div>
                 
-                <h3>Сценарий 2: Напряжённый диалог</h3>
-                <div class="command">
-                    <span class="example">!!!! *хлопает по столу* Ты предатель!</span>
-                    <span class="result">→ Тёмный_Лорд (❗ гневно, хлопая по столу): Ты предатель!</span>
-                </div>
-                <div class="command">
-                    <span class="example">.... *отводит взгляд* Я лишь выполнял свой долг</span>
-                    <span class="result">→ Светлый_Маг (🤔 виновато, отводя взгляд): Я лишь выполнял свой долг</span>
-                </div>
-                <div class="command">
-                    <span class="example">/slap @Светлый_Маг</span>
-                    <span class="result">→ Тёмный_Лорд резко бьёт Светлого_Мага по лицу, не сдерживая эмоций</span>
+                <div class="news-item">
+                    <h3>Обновление системы ников</h3>
+                    <p class="news-date">5 октября 2023</p>
+                    <p>Теперь ники могут содержать до 32 символов и поддерживают больше специальных символов. Также исправлена проблема с отображением ников в мобильных приложениях.</p>
                 </div>
                 
-                <h3>Сценарий 3: Романтическая сцена</h3>
-                <div class="command">
-                    <span class="example">//// *смущённо опускает глаза* Я... я тебя люблю</span>
-                    <span class="result">→ Скромник (😳 смущён, опуская глаза): Я... я тебя люблю</span>
+                <div class="news-item">
+                    <h3>Запуск бота в Telegram</h3>
+                    <p class="news-date">28 сентября 2023</p>
+                    <p>Наш бот теперь официально доступен в Telegram! Вы можете найти его по имени <code>пока что не опубликован в общий доступ</code> или через поиск по названию "РП Бот".</p>
                 </div>
-                <div class="command">
-                    <span class="example">/kiss @Скромник нежно</span>
-                    <span class="result">→ Возлюбленная нежно целует Скромника в ответ на его признание</span>
-                </div>
-                <div class="command">
-                    <span class="example">^^^^ *обнимает в ответ* Я тоже!</span>
-                    <span class="result">→ Скромник (☺ рад, обнимая в ответ): Я тоже!</span>
+            </div>
+        </div>
+        
+        <!-- FAQ -->
+        <div id="faq" class="tab-content">
+            <div class="section">
+                <h2>❓ Часто задаваемые вопросы</h2>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Как установить или изменить никнейм?</span>
+                        <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Для установки или изменения никнейма используйте команду <code>/setnick [ваш_ник]</code>. Например:</p>
+                        <span class="example">/setnick Тёмный_Лорд</span>
+                        <p>Никнейм может содержать до 32 символов, включая пробелы и большинство специальных символов.</p>
+                    </div>
                 </div>
                 
-                <div class="tip">
-                    💡 <strong>Совет:</strong> Используйте звёздочки (*) для описания действий вашего персонажа и кавычки для прямой речи. Это сделает ваши сообщения более понятными и выразительными.
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Как обратиться к другому игроку?</span>
+                        <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Для обращения к другому игроку просто используйте его никнейм. Например:</p>
+                        <span class="example">???? Светлый_Маг, что это было?</span>
+                        <p class="note"><strong>Примечание:</strong> Упоминать можно только игроков, которые уже установили свой никнейм с помощью команды <code>/setnick</code>.</p>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Почему моя команда не работает?</span>
+                        <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Возможные причины:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>Вы не установили никнейм (используйте <code>/setnick</code>)</li>
+                            <li>Команда содержит ошибки (проверьте правильность написания)</li>
+                            <li>Вы пытаетесь упомянуть игрока, которого нет в базе</li>
+                            <li>Бот временно недоступен (попробуйте позже)</li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class="faq-item">
+                    <div class="faq-question" onclick="toggleFaq(this)">
+                        <span>Как узнать список всех команд?</span>
+                        <svg class="faq-icon" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                    </div>
+                    <div class="faq-answer">
+                        <p>Вы можете просмотреть все команды:</p>
+                        <ul style="margin-left: 1.5rem; margin-top: 0.5rem;">
+                            <li>В этом руководстве (разделы "Основные", "Эмоции", "Действия")</li>
+                            <li>Отправив команду <code>/commands</code> в чате с ботом</li>
+                            <li>Используя функцию поиска (кнопка 🔍 в правом нижнем углу)</li>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
     
     <footer>
-        РП Бот • Версия 1.4 • Работает в Telegram • © 2023 Все права защищены
+        РП Бот • Версия 1.4 • © 2023 Все права защищены
     </footer>
+    
+    <!-- Модальное окно поиска -->
+    <div class="search-modal" id="searchModal">
+        <div class="search-modal-content">
+            <div class="search-modal-header">
+                <h3>🔍 Поиск по командам</h3>
+                <button class="search-modal-close" onclick="closeSearchModal()">&times;</button>
+            </div>
+            <div class="search-modal-body">
+                <input type="text" class="search-modal-input" id="searchModalInput" placeholder="Введите название команды или ключевое слово...">
+                <div class="search-results" id="searchResults">
+                    <div class="search-result-empty">Начните вводить запрос для поиска команд</div>
+                </div>
+            </div>
+        </div>
+    </div>
     
     <!-- Виджет сообщений ВК -->
     <div id="vk_community_messages" class="vk-msg-widget"></div>
     
+    <!-- Сообщение о копировании -->
     <div id="copiedMessage" class="copied-message">
         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M20 6L9 17l-5-5"></path>
@@ -808,6 +1066,20 @@
     </div>
     
     <script>
+        // База данных пользователей (пример)
+        const userDatabase = {
+            "Светлый_Маг": true,
+            "Тёмный_Лорд": true,
+            "Весёлый_Гном": true,
+            "Скромница": true,
+            "Романтик": true,
+            "Боец": true,
+            "Лидер": true,
+            "Усталый_Путник": true,
+            "Оптимист": true,
+            "Скептик": true
+        };
+        
         // Определение платформы
         function detectPlatform() {
             // Для ВКонтакте
@@ -919,6 +1191,79 @@
             }
         }
         
+        // Поиск команд
+        function searchCommands() {
+            const searchTerm = document.getElementById('searchModalInput').value.toLowerCase().trim();
+            const resultsContainer = document.getElementById('searchResults');
+            
+            if (!searchTerm) {
+                resultsContainer.innerHTML = '<div class="search-result-empty">Начните вводить запрос для поиска команд</div>';
+                return;
+            }
+            
+            const commands = document.querySelectorAll('.command');
+            let foundCount = 0;
+            let resultsHTML = '';
+            
+            commands.forEach(cmd => {
+                const searchData = cmd.getAttribute('data-search').toLowerCase();
+                const category = cmd.getAttribute('data-category');
+                const name = cmd.querySelector('.command-name').textContent;
+                const desc = cmd.querySelector('.command-desc').textContent;
+                
+                if (searchData.includes(searchTerm) || name.toLowerCase().includes(searchTerm) || desc.toLowerCase().includes(searchTerm)) {
+                    foundCount++;
+                    resultsHTML += `
+                        <div class="search-result-item" onclick="scrollToCommand('${cmd.id || ''}')">
+                            <div class="search-result-category">${category}</div>
+                            <div style="font-weight: 600;">${name}</div>
+                            <div style="font-size: 0.9rem; opacity: 0.8;">${desc}</div>
+                        </div>
+                    `;
+                }
+            });
+            
+            if (foundCount > 0) {
+                resultsContainer.innerHTML = resultsHTML;
+            } else {
+                resultsContainer.innerHTML = '<div class="search-result-empty">Ничего не найдено. Попробуйте другой запрос.</div>';
+            }
+        }
+        
+        // Прокрутка к команде
+        function scrollToCommand(cmdId) {
+            if (cmdId) {
+                const element = document.getElementById(cmdId);
+                if (element) {
+                    element.scrollIntoView({ behavior: 'smooth' });
+                    element.style.animation = 'highlight 1.5s';
+                    setTimeout(() => {
+                        element.style.animation = '';
+                    }, 1500);
+                }
+            }
+            closeSearchModal();
+        }
+        
+        // Открытие модального окна поиска
+        function openSearchModal() {
+            document.getElementById('searchModal').classList.add('active');
+            document.getElementById('searchModalInput').focus();
+        }
+        
+        // Закрытие модального окна поиска
+        function closeSearchModal() {
+            document.getElementById('searchModal').classList.remove('active');
+            document.getElementById('searchModalInput').value = '';
+            document.getElementById('searchResults').innerHTML = '<div class="search-result-empty">Начните вводить запрос для поиска команд</div>';
+        }
+        
+        // Управление FAQ
+        function toggleFaq(element) {
+            const item = element.closest('.faq-item');
+            item.classList.toggle('active');
+        }
+        
         // Инициализация при загрузке
         document.addEventListener('DOMContentLoaded', function() {
             const platform = detectPlatform();
@@ -929,23 +1274,27 @@
             // Проверяем сохраненную тему
             checkSavedTheme();
             
-            // Назначаем обработчик для кнопки темы
+            // Назначаем обработчики для кнопок
             document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+            document.getElementById('searchBtn').addEventListener('click', openSearchModal);
+            
+            // Назначаем обработчик для поиска
+            document.getElementById('searchModalInput').addEventListener('input', searchCommands);
             
             // Адаптация под мобильные устройства
             if (window.innerWidth < 768) {
                 document.body.style.fontSize = '15px';
             }
             
-            // Плавная прокрутка для якорей
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    document.querySelector(this.getAttribute('href')).scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                });
-            });
+            // Добавляем анимацию для highlight
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes highlight {
+                    0% { background-color: rgba(81, 129, 184, 0.1); }
+                    100% { background-color: transparent; }
+                }
+            `;
+            document.head.appendChild(style);
         });
     </script>
 </body>
