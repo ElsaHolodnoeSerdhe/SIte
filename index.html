@@ -5,6 +5,174 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>РП Бот - Полное руководство</title>
     <style>
+    /* Стили для системы уведомлений */
+    .notification-btn {
+        position: fixed;
+        bottom: 140px;
+        right: 20px;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        background: var(--primary);
+        color: white;
+        border: none;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+        z-index: 90;
+        transition: all 0.3s;
+    }
+    
+    .notification-btn:hover {
+        transform: scale(1.1);
+    }
+    
+    .notification-badge {
+        position: absolute;
+        top: -5px;
+        right: -5px;
+        background: var(--danger);
+        color: white;
+        border-radius: 50%;
+        width: 20px;
+        height: 20px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: bold;
+    }
+    
+    .notification-menu {
+        position: fixed;
+        bottom: 200px;
+        right: 20px;
+        width: 300px;
+        max-height: 400px;
+        background: var(--card-bg);
+        border-radius: 12px;
+        box-shadow: var(--card-shadow);
+        z-index: 1000;
+        overflow: hidden;
+        transform: scale(0);
+        transform-origin: bottom right;
+        transition: transform 0.3s;
+        display: flex;
+        flex-direction: column;
+    }
+    
+    .notification-menu.active {
+        transform: scale(1);
+    }
+    
+    .notification-header {
+        padding: 1rem;
+        background: var(--primary);
+        color: white;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    
+    .notification-close {
+        background: none;
+        border: none;
+        color: white;
+        font-size: 1.2rem;
+        cursor: pointer;
+    }
+    
+    .notification-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0.5rem;
+    }
+    
+    .notification-item {
+        padding: 0.8rem;
+        margin-bottom: 0.5rem;
+        border-radius: 8px;
+        background: var(--light);
+        transition: all 0.2s;
+        cursor: pointer;
+    }
+    
+    .dark-mode .notification-item {
+        background: rgba(255,255,255,0.05);
+    }
+    
+    .notification-item:hover {
+        background: rgba(81, 129, 184, 0.1);
+    }
+    
+    .notification-item.unread {
+        background: rgba(81, 129, 184, 0.15);
+    }
+    
+    .notification-title {
+        font-weight: 600;
+        margin-bottom: 0.3rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    
+    .notification-text {
+        font-size: 0.9rem;
+        opacity: 0.9;
+    }
+    
+    .notification-time {
+        font-size: 0.7rem;
+        opacity: 0.7;
+        margin-top: 0.3rem;
+        text-align: right;
+    }
+    
+    .notification-empty {
+        padding: 2rem;
+        text-align: center;
+        color: var(--text-color);
+        opacity: 0.7;
+        font-size: 0.9rem;
+    }
+    
+    .notification-clear {
+        padding: 0.8rem;
+        text-align: center;
+        background: var(--light);
+        color: var(--primary);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    
+    .dark-mode .notification-clear {
+        background: rgba(255,255,255,0.1);
+    }
+    
+    .notification-clear:hover {
+        background: rgba(81, 129, 184, 0.2);
+    }
+    
+    @media (max-width: 768px) {
+        .notification-btn {
+            bottom: 135px;
+            width: 45px;
+            height: 45px;
+        }
+        
+        .notification-menu {
+            bottom: 190px;
+            right: 15px;
+            width: 280px;
+            max-height: 350px;
+        }
+    }
+</style>
+    <style>
         :root {
             --primary: #5181B8;
             --secondary: #5E81A8;
@@ -1297,5 +1465,277 @@
             document.head.appendChild(style);
         });
     </script>
+                        <!-- Добавьте этот код в <body>, перед закрывающим тегом </body> -->
+<!-- Кнопка уведомлений -->
+<button class="notification-btn" id="notificationBtn">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
+        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
+    </svg>
+    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+</button>
+
+<!-- Меню уведомлений -->
+<div class="notification-menu" id="notificationMenu">
+    <div class="notification-header">
+        <h3>Уведомления</h3>
+        <button class="notification-close" onclick="toggleNotificationMenu()">&times;</button>
+    </div>
+    <div class="notification-body" id="notificationBody">
+        <div class="notification-empty">Нет новых уведомлений</div>
+    </div>
+    <div class="notification-clear" onclick="clearAllNotifications()">Очистить все</div>
+</div>
+
+<script>
+    // Система уведомлений
+    let notifications = [];
+    
+    // Проверить, есть ли сохраненные уведомления в localStorage
+    function loadNotifications() {
+        const savedNotifications = localStorage.getItem('notifications');
+        if (savedNotifications) {
+            notifications = JSON.parse(savedNotifications);
+            updateNotificationUI();
+        } else {
+            // Добавляем тестовые уведомления при первом запуске
+            addNotification({
+                title: 'Добро пожаловать!',
+                text: 'Вы успешно зарегистрировались в системе. Приятного использования!',
+                time: new Date(),
+                isRead: false,
+                type: 'success'
+            });
+            
+            addNotification({
+                title: 'Новое обновление',
+                text: 'Доступна новая версия бота v1.4. Проверьте раздел "Новости" для подробностей.',
+                time: new Date(Date.now() - 3600000), // 1 час назад
+                isRead: false,
+                type: 'info'
+            });
+        }
+    }
+    
+    // Добавить новое уведомление
+    function addNotification(notification) {
+        notifications.unshift(notification);
+        if (notifications.length > 20) {
+            notifications.pop(); // Ограничиваем количество уведомлений
+        }
+        saveNotifications();
+        updateNotificationUI();
+        
+        // Показать уведомление в реальном времени (если меню закрыто)
+        if (!document.getElementById('notificationMenu').classList.contains('active')) {
+            showNewNotification(notification);
+        }
+    }
+    
+    // Показать всплывающее уведомление
+    function showNewNotification(notification) {
+        // Создаем временное уведомление
+        const tempNotification = document.createElement('div');
+        tempNotification.className = 'notification-item';
+        tempNotification.innerHTML = `
+            <div class="notification-title">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    ${getNotificationIcon(notification.type)}
+                </svg>
+                ${notification.title}
+            </div>
+            <div class="notification-text">${notification.text}</div>
+            <div class="notification-time">${formatTime(notification.time)}</div>
+        `;
+        
+        tempNotification.style.position = 'fixed';
+        tempNotification.style.bottom = '200px';
+        tempNotification.style.right = '20px';
+        tempNotification.style.width = '300px';
+        tempNotification.style.zIndex = '1000';
+        tempNotification.style.transform = 'translateY(20px)';
+        tempNotification.style.opacity = '0';
+        tempNotification.style.transition = 'all 0.3s';
+        
+        document.body.appendChild(tempNotification);
+        
+        // Анимация появления
+        setTimeout(() => {
+            tempNotification.style.transform = 'translateY(0)';
+            tempNotification.style.opacity = '1';
+        }, 10);
+        
+        // Анимация исчезновения через 5 секунд
+        setTimeout(() => {
+            tempNotification.style.transform = 'translateY(-20px)';
+            tempNotification.style.opacity = '0';
+            setTimeout(() => {
+                tempNotification.remove();
+            }, 300);
+        }, 5000);
+    }
+    
+    // Получить иконку для типа уведомления
+    function getNotificationIcon(type) {
+        switch(type) {
+            case 'success':
+                return '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>';
+            case 'info':
+                return '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>';
+            case 'warning':
+                return '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>';
+            case 'danger':
+                return '<circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line>';
+            default:
+                return '<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path><path d="M13.73 21a2 2 0 0 1-3.46 0"></path>';
+        }
+    }
+    
+    // Сохранить уведомления в localStorage
+    function saveNotifications() {
+        localStorage.setItem('notifications', JSON.stringify(notifications));
+    }
+    
+    // Обновить интерфейс уведомлений
+    function updateNotificationUI() {
+        const unreadCount = notifications.filter(n => !n.isRead).length;
+        const badge = document.getElementById('notificationBadge');
+        const body = document.getElementById('notificationBody');
+        
+        // Обновляем бейдж
+        if (unreadCount > 0) {
+            badge.style.display = 'flex';
+            badge.textContent = unreadCount > 9 ? '9+' : unreadCount;
+        } else {
+            badge.style.display = 'none';
+        }
+        
+        // Обновляем список уведомлений
+        if (notifications.length === 0) {
+            body.innerHTML = '<div class="notification-empty">Нет новых уведомлений</div>';
+            return;
+        }
+        
+        body.innerHTML = '';
+        notifications.forEach((notification, index) => {
+            const notificationElement = document.createElement('div');
+            notificationElement.className = `notification-item ${notification.isRead ? '' : 'unread'}`;
+            notificationElement.innerHTML = `
+                <div class="notification-title">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        ${getNotificationIcon(notification.type)}
+                    </svg>
+                    ${notification.title}
+                </div>
+                <div class="notification-text">${notification.text}</div>
+                <div class="notification-time">${formatTime(notification.time)}</div>
+            `;
+            
+            notificationElement.addEventListener('click', () => {
+                markAsRead(index);
+                // Здесь можно добавить действия при клике на уведомление
+            });
+            
+            body.appendChild(notificationElement);
+        });
+    }
+    
+    // Отметить уведомление как прочитанное
+    function markAsRead(index) {
+        if (index >= 0 && index < notifications.length) {
+            notifications[index].isRead = true;
+            saveNotifications();
+            updateNotificationUI();
+        }
+    }
+    
+    // Отметить все как прочитанные
+    function markAllAsRead() {
+        notifications.forEach(n => n.isRead = true);
+        saveNotifications();
+        updateNotificationUI();
+    }
+    
+    // Очистить все уведомления
+    function clearAllNotifications() {
+        notifications = [];
+        saveNotifications();
+        updateNotificationUI();
+    }
+    
+    // Форматирование времени
+    function formatTime(date) {
+        const now = new Date();
+        const diff = now - new Date(date);
+        
+        if (diff < 60000) { // Менее минуты
+            return 'только что';
+        } else if (diff < 3600000) { // Менее часа
+            const mins = Math.floor(diff / 60000);
+            return `${mins} ${pluralize(mins, 'минуту', 'минуты', 'минут')} назад`;
+        } else if (diff < 86400000) { // Менее суток
+            const hours = Math.floor(diff / 3600000);
+            return `${hours} ${pluralize(hours, 'час', 'часа', 'часов')} назад`;
+        } else {
+            const days = Math.floor(diff / 86400000);
+            return `${days} ${pluralize(days, 'день', 'дня', 'дней')} назад`;
+        }
+    }
+    
+    // Функция для склонения слов
+    function pluralize(number, one, few, many) {
+        const n = Math.abs(number);
+        const n10 = n % 10;
+        const n100 = n % 100;
+        
+        if (n10 === 1 && n100 !== 11) return one;
+        if (n10 >= 2 && n10 <= 4 && (n100 < 10 || n100 >= 20)) return few;
+        return many;
+    }
+    
+    // Переключение меню уведомлений
+    function toggleNotificationMenu() {
+        const menu = document.getElementById('notificationMenu');
+        menu.classList.toggle('active');
+        
+        if (menu.classList.contains('active')) {
+            markAllAsRead(); // При открытии меню отмечаем все как прочитанные
+        }
+    }
+    
+    // Инициализация при загрузке
+    document.addEventListener('DOMContentLoaded', function() {
+        // Загружаем уведомления
+        loadNotifications();
+        
+        // Назначаем обработчик для кнопки уведомлений
+        document.getElementById('notificationBtn').addEventListener('click', toggleNotificationMenu);
+        
+        // Закрываем меню при клике вне его
+        document.addEventListener('click', function(e) {
+            const menu = document.getElementById('notificationMenu');
+            const btn = document.getElementById('notificationBtn');
+            
+            if (menu.classList.contains('active') {
+                if (!menu.contains(e.target) {
+                    if (e.target !== btn && !btn.contains(e.target)) {
+                        menu.classList.remove('active');
+                    }
+                }
+            }
+        });
+        
+        // Пример: отправка тестового уведомления через 10 секунд
+        setTimeout(() => {
+            addNotification({
+                title: 'Пример уведомления',
+                text: 'Это тестовое уведомление, отправленное через 10 секунд после загрузки страницы.',
+                time: new Date(),
+                isRead: false,
+                type: 'info'
+            });
+        }, 10000);
+    });
+</script>
 </body>
 </html>
