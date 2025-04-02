@@ -5,210 +5,325 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>РП Бот - Полное руководство</title>
     <style>
-        /* Добавляем красивые стили для регистрации */
-        .auth-overlay {
+        :root {
+            --primary: #6366f1;
+            --primary-dark: #4f46e5;
+            --primary-light: #818cf8;
+            --secondary: #f43f5e;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --gray: #94a3b8;
+            --gray-light: #e2e8f0;
+            --success: #10b981;
+            --danger: #ef4444;
+            --card-bg: rgba(255, 255, 255, 0.96);
+            --border-color: rgba(0, 0, 0, 0.1);
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f1f5f9;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        /* Кнопка авторизации */
+        .auth-btn-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            display: flex;
+            gap: 12px;
+        }
+
+        .auth-btn {
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            outline: none;
+        }
+
+        .btn-register {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-register:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .btn-user {
+            background: white;
+            color: var(--dark);
+            box-shadow: var(--shadow);
+            border: 1px solid var(--gray-light);
+        }
+
+        .btn-user:hover {
+            background: white;
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .user-avatar {
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+
+        /* Модальное окно */
+        .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.7);
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(8px);
             z-index: 10000;
             display: flex;
             align-items: center;
             justify-content: center;
             opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease-out;
-            backdrop-filter: blur(5px);
+            pointer-events: none;
+            transition: opacity 0.3s ease;
         }
-        
-        .auth-overlay.active {
+
+        .modal-overlay.active {
             opacity: 1;
-            visibility: visible;
+            pointer-events: all;
         }
-        
-        .auth-card {
+
+        .modal-content {
             background: var(--card-bg);
             border-radius: 16px;
             width: 90%;
-            max-width: 400px;
-            padding: 2rem;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
-            transform: translateY(20px);
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            max-width: 420px;
+            padding: 32px;
+            box-shadow: var(--shadow-xl);
+            transform: translateY(20px) scale(0.95);
             opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid var(--gray-light);
         }
-        
-        .auth-overlay.active .auth-card {
-            transform: translateY(0);
+
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
             opacity: 1;
-            transition-delay: 0.1s;
         }
-        
-        .auth-header {
+
+        .modal-header {
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 28px;
         }
-        
-        .auth-header h2 {
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-            font-size: 1.5rem;
+
+        .modal-header h2 {
+            color: var(--primary-dark);
+            margin-bottom: 8px;
+            font-size: 1.8rem;
+            font-weight: 700;
         }
-        
-        .auth-header p {
-            color: var(--text-color);
-            opacity: 0.7;
-            font-size: 0.9rem;
+
+        .modal-header p {
+            color: var(--gray);
+            font-size: 0.95rem;
         }
-        
-        .auth-form .form-group {
-            margin-bottom: 1.5rem;
+
+        .form-group {
+            margin-bottom: 20px;
         }
-        
-        .auth-form label {
+
+        .form-group label {
             display: block;
-            margin-bottom: 0.5rem;
-            color: var(--text-color);
-            font-size: 0.9rem;
+            margin-bottom: 8px;
+            color: var(--dark);
+            font-size: 0.95rem;
             font-weight: 500;
         }
-        
-        .auth-form input {
+
+        .form-control {
             width: 100%;
-            padding: 12px 16px;
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            background: var(--light);
-            color: var(--text-color);
+            padding: 14px 16px;
+            border: 1px solid var(--gray-light);
+            border-radius: 10px;
+            background: white;
+            color: var(--dark);
             font-size: 1rem;
             transition: all 0.2s;
+            box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.05);
         }
-        
-        .auth-form input:focus {
+
+        .form-control:focus {
             border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgba(81, 129, 184, 0.2);
+            box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2);
             outline: none;
         }
-        
-        .auth-actions {
+
+        .form-actions {
             display: flex;
-            gap: 1rem;
-            margin-top: 2rem;
+            gap: 12px;
+            margin-top: 28px;
         }
-        
-        .auth-btn {
+
+        .btn {
             flex: 1;
-            padding: 12px;
-            border-radius: 8px;
-            font-weight: 500;
+            padding: 14px;
+            border-radius: 10px;
+            font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
-        }
-        
-        .auth-btn-primary {
-            background: var(--primary);
-            color: white;
+            font-size: 0.95rem;
             border: none;
         }
-        
-        .auth-btn-primary:hover {
-            background: #3a6ea5;
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            box-shadow: var(--shadow);
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
             transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
-        
-        .auth-btn-secondary {
-            background: transparent;
-            color: var(--text-color);
-            border: 1px solid var(--border-color);
+
+        .btn-outline {
+            background: white;
+            color: var(--dark);
+            border: 1px solid var(--gray-light);
+            box-shadow: var(--shadow);
         }
-        
-        .auth-btn-secondary:hover {
-            background: rgba(81, 129, 184, 0.1);
+
+        .btn-outline:hover {
+            background: var(--gray-light);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
         }
-        
+
         .error-message {
             color: var(--danger);
-            font-size: 0.8rem;
-            margin-top: 0.5rem;
+            font-size: 0.85rem;
+            margin-top: 6px;
             display: none;
-            animation: fadeIn 0.2s;
+            animation: fadeIn 0.3s;
         }
-        
-        /* Красивый индикатор пользователя */
-        .user-pill {
+
+        .icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-5px); }
+            40%, 80% { transform: translateX(5px); }
+        }
+
+        /* Уведомления */
+        .notification {
             position: fixed;
-            top: 20px;
+            bottom: 20px;
             right: 20px;
-            background: rgba(81, 129, 184, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 20px;
-            padding: 8px 12px 8px 8px;
-            display: inline-flex;
+            background: white;
+            padding: 16px 20px;
+            border-radius: 12px;
+            box-shadow: var(--shadow-xl);
+            display: flex;
             align-items: center;
-            z-index: 1000;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
-            transform: translateY(-10px);
+            gap: 12px;
+            transform: translateY(30px);
             opacity: 0;
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 11000;
+            max-width: 320px;
         }
-        
-        .user-pill.active {
+
+        .notification.show {
             transform: translateY(0);
             opacity: 1;
         }
-        
-        .user-avatar {
+
+        .notification-icon {
             width: 24px;
             height: 24px;
             border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+
+        .notification-success .notification-icon {
+            background: var(--success);
+            color: white;
+        }
+
+        .notification-info .notification-icon {
             background: var(--primary);
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-right: 8px;
-            font-size: 0.7rem;
-            font-weight: bold;
         }
-        
-        .user-name {
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-right: 8px;
+
+        .notification-warning .notification-icon {
+            background: var(--secondary);
+            color: white;
         }
-        
-        .user-logout {
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+
+        .notification-message {
+            font-size: 0.9rem;
+            color: var(--gray);
+        }
+
+        .notification-close {
             background: none;
             border: none;
-            width: 20px;
-            height: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            color: var(--gray);
             cursor: pointer;
-            color: var(--text-color);
-            opacity: 0.7;
-            transition: all 0.2s;
-            border-radius: 50%;
-        }
-        
-        .user-logout:hover {
-            background: rgba(0,0,0,0.1);
-            opacity: 1;
-        }
-        
-        /* Анимации */
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        
-        @keyframes slideIn {
-            from { transform: translateY(20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
+            margin-left: 8px;
         }
     </style>
 </style>
@@ -842,6 +957,243 @@
         <h1>🎭 РП Бот <span id="platformIndicator" class="platform-indicator">Telegram</span><span class="version-badge">v1.4</span></h1>
         <p class="header-subtitle">Полное руководство по всем командам и возможностям</p>
     </header>
+
+    <body>
+    <!-- Кнопка авторизации -->
+    <div class="auth-btn-container" id="authContainer">
+        <!-- Будет заполнено скриптом -->
+    </div>
+
+    <!-- Модальное окно регистрации -->
+    <div class="modal-overlay" id="authModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Создайте аккаунт</h2>
+                <p>Зарегистрируйтесь, чтобы получить доступ ко всем функциям</p>
+            </div>
+            <form id="registrationForm">
+                <div class="form-group">
+                    <label for="email">Электронная почта</label>
+                    <input type="email" id="email" class="form-control" placeholder="example@mail.com" required>
+                    <div class="error-message" id="emailError">Пожалуйста, введите корректный email</div>
+                </div>
+                <div class="form-group">
+                    <label for="nickname">Ваш никнейм</label>
+                    <input type="text" id="nickname" class="form-control" placeholder="Придумайте уникальный ник" required>
+                    <div class="error-message" id="nicknameError">Ник должен быть от 3 до 20 символов</div>
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-outline" onclick="closeModal()">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Зарегистрироваться</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Контейнер для уведомлений -->
+    <div id="notificationContainer"></div>
+
+    <script>
+        // Система пользователя
+        const UserSystem = {
+            currentUser: JSON.parse(localStorage.getItem('rpBotUser')) || null,
+            
+            init: function() {
+                this.renderAuthButton();
+                
+                // Показываем приветственное уведомление для новых пользователей
+                if (!this.currentUser) {
+                    setTimeout(() => {
+                        this.showNotification('info', 'Добро пожаловать!', 'Зарегистрируйтесь для доступа ко всем функциям');
+                    }, 2000);
+                }
+            },
+            
+            renderAuthButton: function() {
+                const authContainer = document.getElementById('authContainer');
+                authContainer.innerHTML = '';
+                
+                if (this.currentUser) {
+                    // Показываем кнопку с аватаром пользователя
+                    const avatarLetter = this.currentUser.nickname.charAt(0).toUpperCase();
+                    
+                    const userBtn = document.createElement('button');
+                    userBtn.className = 'auth-btn btn-user';
+                    userBtn.innerHTML = `
+                        <div class="user-avatar">${avatarLetter}</div>
+                        <span>${this.currentUser.nickname}</span>
+                    `;
+                    userBtn.onclick = () => this.logout();
+                    
+                    authContainer.appendChild(userBtn);
+                } else {
+                    // Показываем кнопку регистрации
+                    const registerBtn = document.createElement('button');
+                    registerBtn.className = 'auth-btn btn-register';
+                    registerBtn.innerHTML = `
+                        <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                            <circle cx="8.5" cy="7" r="4"></circle>
+                            <line x1="20" y1="8" x2="20" y2="14"></line>
+                            <line x1="23" y1="11" x2="17" y2="11"></line>
+                        </svg>
+                        <span>Регистрация</span>
+                    `;
+                    registerBtn.onclick = () => this.openRegistrationModal();
+                    
+                    authContainer.appendChild(registerBtn);
+                }
+            },
+            
+            openRegistrationModal: function() {
+                document.getElementById('authModal').classList.add('active');
+                document.getElementById('email').focus();
+            },
+            
+            closeRegistrationModal: function() {
+                document.getElementById('authModal').classList.remove('active');
+                // Сбрасываем ошибки
+                document.getElementById('emailError').style.display = 'none';
+                document.getElementById('nicknameError').style.display = 'none';
+            },
+            
+            register: function(email, nickname) {
+                // Валидация
+                if (!this.validate(email, nickname)) return false;
+                
+                // Создаем пользователя
+                this.currentUser = {
+                    email: email,
+                    nickname: nickname,
+                    registeredAt: new Date().toISOString()
+                };
+                
+                // Сохраняем в localStorage
+                localStorage.setItem('rpBotUser', JSON.stringify(this.currentUser));
+                
+                // Обновляем интерфейс
+                this.renderAuthButton();
+                this.closeRegistrationModal();
+                
+                // Показываем уведомление
+                this.showNotification('success', 'Добро пожаловать!', `Аккаунт ${nickname} успешно создан`);
+                
+                return true;
+            },
+            
+            validate: function(email, nickname) {
+                let isValid = true;
+                const emailError = document.getElementById('emailError');
+                const nicknameError = document.getElementById('nicknameError');
+                
+                // Сбрасываем ошибки
+                emailError.style.display = 'none';
+                nicknameError.style.display = 'none';
+                
+                // Проверка email
+                if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                    emailError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                // Проверка ника
+                if (nickname.length < 3 || nickname.length > 20) {
+                    nicknameError.style.display = 'block';
+                    isValid = false;
+                }
+                
+                if (!isValid) {
+                    // Анимация тряски
+                    const modalContent = document.querySelector('.modal-content');
+                    modalContent.style.animation = 'shake 0.4s';
+                    setTimeout(() => {
+                        modalContent.style.animation = '';
+                    }, 400);
+                }
+                
+                return isValid;
+            },
+            
+            logout: function() {
+                this.currentUser = null;
+                localStorage.removeItem('rpBotUser');
+                this.renderAuthButton();
+                this.showNotification('info', 'Вы вышли из системы', 'Ваши данные сохранены');
+                
+                // Через 3 секунды снова предлагаем зарегистрироваться
+                setTimeout(() => {
+                    this.showNotification('info', 'Вернитесь в любое время', 'Зарегистрируйтесь для доступа ко всем функциям');
+                }, 3000);
+            },
+            
+            showNotification: function(type, title, message) {
+                const container = document.getElementById('notificationContainer');
+                const notification = document.createElement('div');
+                notification.className = `notification notification-${type}`;
+                notification.innerHTML = `
+                    <div class="notification-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            ${type === 'success' ? '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline>' : ''}
+                            ${type === 'info' ? '<circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line>' : ''}
+                            ${type === 'warning' ? '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line>' : ''}
+                        </svg>
+                    </div>
+                    <div class="notification-content">
+                        <div class="notification-title">${title}</div>
+                        <div class="notification-message">${message}</div>
+                    </div>
+                    <button class="notification-close">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                    </button>
+                `;
+                
+                container.appendChild(notification);
+                
+                // Показываем уведомление
+                setTimeout(() => {
+                    notification.classList.add('show');
+                }, 10);
+                
+                // Закрытие по кнопке
+                notification.querySelector('.notification-close').addEventListener('click', () => {
+                    notification.classList.remove('show');
+                    setTimeout(() => {
+                        notification.remove();
+                    }, 300);
+                });
+                
+                // Автоматическое закрытие через 5 секунд
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.classList.remove('show');
+                        setTimeout(() => {
+                            notification.remove();
+                        }, 300);
+                    }
+                }, 5000);
+            }
+        };
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            UserSystem.init();
+            
+            // Обработка формы регистрации
+            document.getElementById('registrationForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const email = document.getElementById('email').value.trim();
+                const nickname = document.getElementById('nickname').value.trim();
+                UserSystem.register(email, nickname);
+            });
+        });
+        
+        function closeModal() {
+            UserSystem.closeRegistrationModal();
+        }
+    </script>
     
     <!-- Навигационные вкладки -->
     <div class="tab-container">
@@ -1500,224 +1852,6 @@
                 @keyframes highlight {
                     0% { background-color: rgba(81, 129, 184, 0.1); }
                     100% { background-color: transparent; }
-                }
-            `;
-            document.head.appendChild(style);
-        });
-    </script>
-                       </style>
-
-<button class="notification-btn" id="notificationBtn">
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-        <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
-        <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
-    </svg>
-    <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
-</button>
-
-<div class="notification-menu" id="notificationMenu">
-    <div class="notification-body" id="notificationBody">
-        <div class="notification-item">Нет новых уведомлений</div>
-    </div>
-</div>
-
-<script>
-    <body>
-    <!-- Индикатор пользователя -->
-    <div class="user-pill" id="userPill">
-        <div class="user-avatar" id="userAvatar">?</div>
-        <span class="user-name" id="userName"></span>
-        <button class="user-logout" onclick="logoutUser()">✕</button>
-    </div>
-
-    <!-- Оверлей регистрации -->
-    <div class="auth-overlay" id="authOverlay">
-        <div class="auth-card">
-            <div class="auth-header">
-                <h2>Регистрация</h2>
-                <p>Создайте аккаунт для доступа ко всем функциям</p>
-            </div>
-            <form class="auth-form" onsubmit="return false;">
-                <div class="form-group">
-                    <label for="userEmail">Электронная почта</label>
-                    <input type="email" id="userEmail" placeholder="example@mail.com">
-                    <div class="error-message" id="emailError">Пожалуйста, введите корректный email</div>
-                </div>
-                <div class="form-group">
-                    <label for="userNickname">Ваш никнейм</label>
-                    <input type="text" id="userNickname" placeholder="Придумайте уникальный ник">
-                    <div class="error-message" id="nicknameError">Ник должен быть от 3 до 20 символов</div>
-                </div>
-                <div class="auth-actions">
-                    <button class="auth-btn auth-btn-secondary" onclick="closeAuthModal()">Отмена</button>
-                    <button class="auth-btn auth-btn-primary" onclick="registerUser()">Продолжить</button>
-                </div>
-            </form>
-        </div>
-    </div>
-
-    <script>
-        // Система пользователя
-        const UserSystem = {
-            currentUser: JSON.parse(localStorage.getItem('rpBotUser')) || null,
-            
-            init: function() {
-                this.updateUI();
-                // Показываем форму регистрации через 3 секунды, если пользователь не зарегистрирован
-                if (!this.currentUser) {
-                    setTimeout(() => {
-                        this.showRegistrationPrompt();
-                    }, 3000);
-                }
-            },
-            
-            register: function(email, nickname) {
-                // Генерируем аватарку по первой букве ника
-                const avatarLetter = nickname.charAt(0).toUpperCase();
-                
-                this.currentUser = {
-                    email: email,
-                    nickname: nickname,
-                    avatar: avatarLetter,
-                    registeredAt: new Date(),
-                    notifications: []
-                };
-                
-                localStorage.setItem('rpBotUser', JSON.stringify(this.currentUser));
-                this.updateUI();
-                this.addNotification(`Добро пожаловать, ${nickname}!`);
-                
-                // Показываем приветственное сообщение
-                setTimeout(() => {
-                    this.addNotification('Теперь вы можете использовать все функции бота');
-                }, 1500);
-            },
-            
-            logout: function() {
-                this.currentUser = null;
-                localStorage.removeItem('rpBotUser');
-                this.updateUI();
-                this.addNotification('Вы вышли из системы. Возвращайтесь!');
-                
-                // Через 5 секунд снова предлагаем зарегистрироваться
-                setTimeout(() => {
-                    this.showRegistrationPrompt();
-                }, 5000);
-            },
-            
-            addNotification: function(text) {
-                if (!this.currentUser) return;
-                
-                // Проверяем на дубликаты за последние 24 часа
-                const duplicate = this.currentUser.notifications.some(n => 
-                    n.text === text && 
-                    (new Date() - new Date(n.time)) < 86400000
-                );
-                
-                if (!duplicate) {
-                    this.currentUser.notifications.unshift({
-                        text: text,
-                        time: new Date(),
-                        read: false
-                    });
-                    
-                    // Ограничиваем историю уведомлений
-                    if (this.currentUser.notifications.length > 20) {
-                        this.currentUser.notifications.pop();
-                    }
-                    
-                    localStorage.setItem('rpBotUser', JSON.stringify(this.currentUser));
-                    updateNotificationsUI();
-                }
-            },
-            
-            updateUI: function() {
-                const userPill = document.getElementById('userPill');
-                const userAvatar = document.getElementById('userAvatar');
-                const userName = document.getElementById('userName');
-                
-                if (this.currentUser) {
-                    userAvatar.textContent = this.currentUser.avatar;
-                    userName.textContent = this.currentUser.nickname;
-                    userPill.classList.add('active');
-                } else {
-                    userPill.classList.remove('active');
-                }
-            },
-            
-            showRegistrationPrompt: function() {
-                if (!this.currentUser) {
-                    this.addNotification('Зарегистрируйтесь для доступа ко всем функциям');
-                    setTimeout(() => {
-                        openAuthModal();
-                    }, 1000);
-                }
-            }
-        };
-
-        // Управление модальным окном
-        function openAuthModal() {
-            if (!UserSystem.currentUser) {
-                document.getElementById('authOverlay').classList.add('active');
-            }
-        }
-        
-        function closeAuthModal() {
-            document.getElementById('authOverlay').classList.remove('active');
-        }
-        
-        function registerUser() {
-            const email = document.getElementById('userEmail').value.trim();
-            const nickname = document.getElementById('userNickname').value.trim();
-            const emailError = document.getElementById('emailError');
-            const nicknameError = document.getElementById('nicknameError');
-            
-            // Сбрасываем ошибки
-            emailError.style.display = 'none';
-            nicknameError.style.display = 'none';
-            
-            let isValid = true;
-            
-            // Валидация email
-            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
-                emailError.style.display = 'block';
-                isValid = false;
-            }
-            
-            // Валидация ника
-            if (nickname.length < 3 || nickname.length > 20) {
-                nicknameError.style.display = 'block';
-                isValid = false;
-            }
-            
-            if (isValid) {
-                UserSystem.register(email, nickname);
-                closeAuthModal();
-            } else {
-                // Анимация ошибки
-                const authCard = document.querySelector('.auth-card');
-                authCard.style.animation = 'shake 0.5s';
-                setTimeout(() => {
-                    authCard.style.animation = '';
-                }, 500);
-            }
-        }
-        
-        function logoutUser() {
-            UserSystem.logout();
-        }
-
-        // Инициализация при загрузке
-        document.addEventListener('DOMContentLoaded', function() {
-            UserSystem.init();
-            
-            // Добавляем анимацию тряски для ошибок
-            const style = document.createElement('style');
-            style.textContent = `
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    20%, 60% { transform: translateX(-5px); }
-                    40%, 80% { transform: translateX(5px); }
                 }
             `;
             document.head.appendChild(style);
