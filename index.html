@@ -773,6 +773,234 @@
         }
     </style>
 </head>
+    <body>
+    <!-- Индикатор пользователя -->
+    <div class="user-indicator" id="userIndicator">
+        <span id="userNickDisplay"></span>
+        <button onclick="logout()" style="margin-left: 10px; background: none; border: none; color: white; cursor: pointer;">✕</button>
+    </div>
+
+    <!-- Оверлей регистрации -->
+    <div class="registration-overlay" id="registrationOverlay">
+        <div class="registration-form">
+            <h2>Регистрация</h2>
+            <div class="form-group">
+                <label for="regEmail">Email</label>
+                <input type="email" id="regEmail" placeholder="Ваш email">
+                <div class="error-message" id="emailError"></div>
+            </div>
+            <div class="form-group">
+                <label for="regNickname">Никнейм</label>
+                <input type="text" id="regNickname" placeholder="Ваш никнейм в системе">
+                <div class="error-message" id="nicknameError"></div>
+            </div>
+            <div class="form-actions">
+                <button class="btn-secondary" onclick="closeRegistration()">Отмена</button>
+                <button class="btn-primary" onclick="registerUser()">Зарегистрироваться</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Все ваше существующее содержимое страницы остается здесь -->
+    
+    <script>
+        // Система пользователя
+        const userSystem = {
+            currentUser: JSON.parse(localStorage.getItem('rpBotUser')) || null,
+            
+            register: function(email, nickname) {
+                this.currentUser = {
+                    email: email,
+                    nickname: nickname,
+                    registeredAt: new Date(),
+                    notifications: []
+                };
+                localStorage.setItem('rpBotUser', JSON.stringify(this.currentUser));
+                updateUserIndicator();
+                addNotification(`Добро пожаловать, ${nickname}! Регистрация завершена.`);
+            },
+            
+            logout: function() {
+                this.currentUser = null;
+                localStorage.removeItem('rpBotUser');
+                updateUserIndicator();
+                addNotification('Вы вышли из системы');
+            },
+            
+            addNotification: function(text) {
+                if (!this.currentUser) return;
+                
+                // Проверяем, нет ли уже такого уведомления
+                const hasDuplicate = this.currentUser.notifications.some(
+                    n => n.text === text && 
+                    new Date().getTime() - new Date(n.time).getTime() < 86400000 // 1 день
+                );
+                
+                if (!hasDuplicate) {
+                    this.currentUser.notifications.unshift({
+                        text: text,
+                        time: new Date(),
+                        read: false
+                    });
+                    
+                    // Ограничиваем количество уведомлений
+                    if (this.currentUser.notifications.length > 20) {
+                        this.currentUser.notifications.pop();
+                    }
+                    
+                    localStorage.setItem('rpBotUser', JSON.stringify(this.currentUser));
+                    updateNotificationsUI();
+                }
+            },
+            
+            markAllAsRead: function() {
+                if (!this.currentUser) return;
+                
+                this.currentUser.notifications.forEach(n => n.read = true);
+                localStorage.setItem('rpBotUser', JSON.stringify(this.currentUser));
+                updateNotificationsUI();
+            }
+        };
+
+        // Обновление индикатора пользователя
+        function updateUserIndicator() {
+            const indicator = document.getElementById('userIndicator');
+            const nickDisplay = document.getElementById('userNickDisplay');
+            
+            if (userSystem.currentUser) {
+                nickDisplay.textContent = userSystem.currentUser.nickname;
+                indicator.style.display = 'flex';
+                
+                // Проверяем, нужно ли показать приветственное уведомление
+                const now = new Date();
+                const registeredDate = new Date(userSystem.currentUser.registeredAt);
+                const diffHours = (now - registeredDate) / (1000 * 60 * 60);
+                
+                if (diffHours < 1) { // Если регистрация была менее часа назад
+                    userSystem.addNotification(`Добро пожаловать, ${userSystem.currentUser.nickname}!`);
+                }
+            } else {
+                indicator.style.display = 'none';
+            }
+        }
+
+        // Регистрация пользователя
+        function registerUser() {
+            const email = document.getElementById('regEmail').value.trim();
+            const nickname = document.getElementById('regNickname').value.trim();
+            const emailError = document.getElementById('emailError');
+            const nicknameError = document.getElementById('nicknameError');
+            
+            // Валидация
+            let isValid = true;
+            
+            if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+                emailError.textContent = 'Пожалуйста, введите корректный email';
+                emailError.style.display = 'block';
+                isValid = false;
+            } else {
+                emailError.style.display = 'none';
+            }
+            
+            if (nickname.length < 3 || nickname.length > 20) {
+                nicknameError.textContent = 'Никнейм должен быть от 3 до 20 символов';
+                nicknameError.style.display = 'block';
+                isValid = false;
+            } else {
+                nicknameError.style.display = 'none';
+            }
+            
+            if (isValid) {
+                userSystem.register(email, nickname);
+                closeRegistration();
+            }
+        }
+
+        // Выход из системы
+        function logout() {
+            userSystem.logout();
+        }
+
+        // Открытие формы регистрации
+        function openRegistration() {
+            if (!userSystem.currentUser) {
+                document.getElementById('registrationOverlay').style.display = 'flex';
+            }
+        }
+
+        // Закрытие формы регистрации
+        function closeRegistration() {
+            document.getElementById('registrationOverlay').style.display = 'none';
+        }
+
+        // Обновление UI уведомлений
+        function updateNotificationsUI() {
+            if (!userSystem.currentUser) return;
+            
+            const unread = userSystem.currentUser.notifications.filter(n => !n.read).length;
+            const badge = document.getElementById('notificationBadge');
+            const body = document.getElementById('notificationBody');
+            
+            badge.style.display = unread ? 'flex' : 'none';
+            badge.textContent = unread;
+            
+            body.innerHTML = userSystem.currentUser.notifications.length 
+                ? userSystem.currentUser.notifications.map((n, index) => `
+                    <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markNotificationRead(${index})">
+                        <div class="notification-text">${n.text}</div>
+                        <div class="notification-time">${formatTime(n.time)}</div>
+                    </div>
+                `).join('')
+                : '<div class="notification-item">Нет уведомлений</div>';
+        }
+
+        // Отметить уведомление как прочитанное
+        function markNotificationRead(index) {
+            if (userSystem.currentUser && userSystem.currentUser.notifications[index]) {
+                userSystem.currentUser.notifications[index].read = true;
+                localStorage.setItem('rpBotUser', JSON.stringify(userSystem.currentUser));
+                updateNotificationsUI();
+            }
+        }
+
+        // Добавить уведомление
+        function addNotification(text) {
+            if (userSystem.currentUser) {
+                userSystem.addNotification(text);
+            }
+        }
+
+        // Форматирование времени
+        function formatTime(date) {
+            const now = new Date();
+            const diff = now - new Date(date);
+            
+            if (diff < 60000) return 'только что';
+            if (diff < 3600000) return `${Math.floor(diff/60000)} мин. назад`;
+            if (diff < 86400000) return `${Math.floor(diff/3600000)} ч. назад`;
+            return new Date(date).toLocaleDateString();
+        }
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            updateUserIndicator();
+            updateNotificationsUI();
+            
+            // Обработчик кнопки уведомлений
+            document.getElementById('notificationBtn').addEventListener('click', function() {
+                document.getElementById('notificationMenu').classList.toggle('active');
+                userSystem.markAllAsRead();
+            });
+            
+            // Проверяем, нужно ли показать форму регистрации
+            if (!userSystem.currentUser) {
+                setTimeout(() => {
+                    addNotification('Для доступа ко всем функциям, пожалуйста, зарегистрируйтесь');
+                    setTimeout(openRegistration, 2000);
+                }, 3000);
+            }
+        });
+    </script>
 <body>
     <!-- Кнопка переключения темы -->
     <button class="theme-toggle" id="themeToggle">
@@ -1482,51 +1710,5 @@
 </div>
 
 <script>
-// Упрощенная система уведомлений
-let notifications = JSON.parse(localStorage.getItem('notifications')) || [];
-
-function updateUI() {
-    const unread = notifications.filter(n => !n.read).length;
-    document.getElementById('notificationBadge').style.display = unread ? 'flex' : 'none';
-    document.getElementById('notificationBadge').textContent = unread;
-    
-    const body = document.getElementById('notificationBody');
-    body.innerHTML = notifications.length 
-        ? notifications.map(n => `
-            <div class="notification-item ${n.read ? '' : 'unread'}" onclick="markRead(${notifications.indexOf(n)})">
-                ${n.text}<br><small>${new Date(n.time).toLocaleString()}</small>
-            </div>
-        `).join('')
-        : '<div class="notification-item">Нет уведомлений</div>';
-}
-
-function addNotification(text) {
-    notifications.unshift({
-        text,
-        time: new Date(),
-        read: false
-    });
-    localStorage.setItem('notifications', JSON.stringify(notifications));
-    updateUI();
-}
-
-function markRead(index) {
-    if (notifications[index]) {
-        notifications[index].read = true;
-        localStorage.setItem('notifications', JSON.stringify(notifications));
-        updateUI();
-    }
-}
-
-document.getElementById('notificationBtn').addEventListener('click', function() {
-    document.getElementById('notificationMenu').classList.toggle('active');
-    notifications.forEach(n => n.read = true);
-    updateUI();
-});
-
-// Пример использования:
-addNotification("Добро пожаловать! Вы успешно зарегистрированы.");
-setTimeout(() => addNotification("Доступно новое обновление v1.5"), 3000);
-</script>
 </body>
 </html>
