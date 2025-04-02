@@ -6,22 +6,21 @@
     <title>РП Бот - Полное руководство</title>
     <style>
         :root {
-            /* Светлая тема (по умолчанию) */
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #f43f5e;
-            --text-color: #1e293b;
-            --bg-color: #f1f5f9;
-            --card-bg: rgba(255, 255, 255, 0.96);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --gray-light: #e2e8f0;
-            --success: #10b981;
-            --danger: #ef4444;
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
+    --primary: #6366f1;
+    --text-color: #1e293b;
+    --bg-color: #f1f5f9;
+    --card-bg: rgba(255, 255, 255, 0.96);
+    --border-color: rgba(0, 0, 0, 0.1);
+}
+
+/* Темная тема */
+[data-theme="dark"] {
+    --primary: #818cf8;
+    --text-color: #f8fafc;
+    --bg-color: #0f172a;
+    --card-bg: rgba(15, 23, 42, 0.96);
+    --border-color: rgba(255, 255, 255, 0.1);
+}
 
         /* Темная тема */
         [data-theme="dark"] {
@@ -1085,7 +1084,14 @@
         }
     </style>
 </head>
-<body>
+<body> {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+}
+.modal-content {
+    background: var(--card-bg);
+    border: 1px solid var(--border-color);
+}
     <!-- Кнопка переключения темы -->
     <button class="theme-toggle" id="themeToggle">
         <svg id="themeIcon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1151,6 +1157,18 @@
     <div id="notificationContainer"></div>
 
     <script>
+        // Переключение темы
+document.getElementById('themeToggle').addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+});
+
+// Проверка сохраненной темы при загрузке
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+        
         // Система пользователя
         const UserSystem = {
             currentUser: JSON.parse(localStorage.getItem('rpBotUser')) || null,
