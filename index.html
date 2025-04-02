@@ -240,7 +240,7 @@
             transform: translateY(20px) scale(0.95);
             opacity: 0;
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            border: 1px solid var(--gray-light);
+            border: 1px solid var(--border-color);
         }
 
         .modal-overlay.active .modal-content {
@@ -327,10 +327,9 @@
         }
 
         .btn-outline {
-            background: white;
-            color: var(--dark);
-            border: 1px solid var(--gray-light);
-            box-shadow: var(--shadow);
+            background: var(--btn-outline-color);
+            color: var(--btn-outline-text);
+            border: 1px solid var(--border-color);
         }
 
         .btn-outline:hover {
@@ -378,7 +377,9 @@
             position: fixed;
             bottom: 20px;
             right: 20px;
-            background: white;
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
             padding: 16px 20px;
             border-radius: 12px;
             box-shadow: var(--shadow-xl);
@@ -440,10 +441,14 @@
         .notification-close {
             background: none;
             border: none;
-            color: var(--gray);
+            color: var(--text-color);
+            opacity: 0.7;
             cursor: pointer;
             margin-left: 8px;
         }
+        .notification-close:hover {
+            opacity: 1;
+        }     
 
         /* Анимации */
         @keyframes fadeIn {
