@@ -324,13 +324,24 @@
         }
 
         #resendBtn {
-            background: white;
-            color: var(--dark);
-            border: 1px solid var(--gray-light);
+            background: var(--card-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            transition: all 0.2s;
         }
 
         #resendBtn:hover {
-            background: var(--gray-light);
+            background: var(--light);
+            transform: translateY(-2px);
+        }
+
+        .dark-mode #resendBtn {
+            background: var(--card-bg);
+            border-color: var(--border-color);
+        }
+
+        .dark-mode #resendBtn:hover {
+            background: var(--bg-color);
         }
 
         /* Уведомления */
@@ -466,25 +477,6 @@
 
         .dark-mode .notification-message {
             color: var(--gray);
-        }
-
-        .dark-mode {
-            --primary: #6B9BD2;
-            --secondary: #7A9FC8;
-            --telegram: #2AABEE;
-            --dark: #E0E0E0;
-            --light: #1E1E1E;
-            --text: #E0E0E0;
-            --success: #5CC35C;
-            --warning: #FFB740;
-            --info: #42A5F5;
-            --danger: #EF5350;
-    
-            --bg-color: #121212;
-            --text-color: #E0E0E0;
-            --card-bg: #1E1E1E;
-            --card-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            --border-color: #333;
         }
 
         .dark-mode .btn-primary {
