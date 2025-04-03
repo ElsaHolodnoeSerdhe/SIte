@@ -468,6 +468,23 @@
             color: var(--gray);
         }
 
+        .dark-mode .btn-primary {
+            background: var(--primary-dark);
+            color: white;
+            border-color: var(--primary-dark);
+        }
+
+        .dark-mode .btn-primary:hover {
+            background: var(--primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .dark-mode .modal-content .btn-primary {
+            background: var(--primary-dark);
+            color: white;
+        }
+
         /* Анимации */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(-5px); }
@@ -514,7 +531,7 @@
             --warning: #FFB740;
             --info: #42A5F5;
             --danger: #EF5350;
-            
+    
             --bg-color: #121212;
             --text-color: #E0E0E0;
             --card-bg: #1E1E1E;
