@@ -6,49 +6,55 @@
     <title>РП Бот - Полное руководство</title>
     <style>
         :root {
-            /* Светлая тема (по умолчанию) */
-            --menu-bg-color: #ffffff;
-            --menu-text-color: #333333;
-            --notification-bg: #f0f0f0;
-            --notification-text: #222222;
-            --button-bg: #007bff;
-            --button-text: #ffffff;
+  /* Светлая тема (по умолчанию) */
+  --menu-bg-color: #ffffff;
+  --menu-text-color: #333333;
+  --notification-bg: #f0f0f0;
+  --notification-text: #222222;
+  --button-bg: #007bff;
+  --button-text: #ffffff;
+  
+  --primary: #5181B8;
+  --secondary: #5E81A8;
+  --telegram: #2AABEE;
+  --dark: #22313F;
+  --light: #F9F9F9;
+  --text: #222222;
+  --success: #4BB34B;
+  --warning: #FFA000;
+  --info: #2196F3;
+  --danger: #E53935;
+  
+  --bg-color: #F9F9F9;
+  --card-bg: #FFFFFF;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  --border-color: #eee;
+}
 
-
-            
-            --primary: #6366f1;
-            --primary-dark: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #f43f5e;
-            --dark: #1e293b;
-            --light: #f8fafc;
-            --gray: #94a3b8;
-            --gray-light: #e2e8f0;
-            --success: #10b981;
-            --danger: #ef4444;
-            --card-bg: rgba(255, 255, 255, 0.96);
-            --border-color: rgba(0, 0, 0, 0.1);
-            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
-            --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-
-
-        [data-theme="dark"] {
-              /* Тёмная тема */
-              --menu-bg-color: #1a1a1a;
-              --menu-text-color: #f0f0f0;
-              --notification-bg: #333333;
-              --notification-text: #ffffff;
-              --button-bg: #0056b3;
-              --button-text: #ffffff;
-        }
-        
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+[data-theme="dark"] {
+  /* Тёмная тема */
+  --menu-bg-color: #1a1a1a;
+  --menu-text-color: #f0f0f0;
+  --notification-bg: #333333;
+  --notification-text: #ffffff;
+  --button-bg: #0056b3;
+  --button-text: #ffffff;
+  
+  --primary: #6B9BD2;
+  --secondary: #7A9FC8;
+  --telegram: #2AABEE;
+  --dark: #E0E0E0;
+  --light: #1E1E1E;
+  --text: #E0E0E0;
+  --success: #5CC35C;
+  --warning: #FFB740;
+  --info: #42A5F5;
+  --danger: #EF5350;
+  
+  --bg-color: #121212;
+  --card-bg: #1E1E1E;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.3);
+  --border-color: #333;
         }
 
         body {
@@ -470,24 +476,10 @@
             --border-color: #eee;
         }
         
-        .dark-mode {
-            --primary: #6B9BD2;
-            --secondary: #7A9FC8;
-            --telegram: #2AABEE;
-            --dark: #E0E0E0;
-            --light: #1E1E1E;
-            --text: #E0E0E0;
-            --success: #5CC35C;
-            --warning: #FFB740;
-            --info: #42A5F5;
-            --danger: #EF5350;
-            
-            --bg-color: #121212;
-            --text-color: #E0E0E0;
-            --card-bg: #1E1E1E;
-            --card-shadow: 0 2px 8px rgba(0,0,0,0.3);
-            --border-color: #333;
-        }
+
+            /* .dark */
+
+        
         
         * {
             margin: 0;
@@ -2468,16 +2460,33 @@
     </script>
         <script>
         // Переключение темы
-        document.getElementById('themeToggle').addEventListener('click', function() {
-            const currentTheme = document.documentElement.getAttribute('data-theme');
-            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
-            document.documentElement.setAttribute('data-theme', newTheme);
-            localStorage.setItem('theme', newTheme);
-        });
+document.getElementById('themeToggle').addEventListener('click', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', newTheme);
+    localStorage.setItem('theme', newTheme);
+    
+    // Обновите иконку
+    const themeIcon = document.getElementById('themeIcon');
+    if (newTheme === 'dark') {
+        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+    } else {
+        themeIcon.innerHTML = '<circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line>';
+    }
+});
 
-        // Загрузка сохраненной темы
-        const savedTheme = localStorage.getItem('theme') || 'light';
-        document.documentElement.setAttribute('data-theme', savedTheme);
+// Загрузка сохраненной темы
+const savedTheme = localStorage.getItem('theme') || 'light';
+document.documentElement.setAttribute('data-theme', savedTheme);
+
+// Установите правильную иконку при загрузке
+document.addEventListener('DOMContentLoaded', function() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const themeIcon = document.getElementById('themeIcon');
+    if (currentTheme === 'dark') {
+        themeIcon.innerHTML = '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path>';
+    }
+});
     </script>
 </body>
 </html>
